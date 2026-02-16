@@ -6,6 +6,7 @@ repo_name: jarethmt/TRUST-Protocol
 
 theme:
   name: material
+  custom_dir: overrides
   palette:
     - media: "(prefers-color-scheme)"
       scheme: slate
@@ -58,6 +59,7 @@ extra_css:
 
 extra_javascript:
   - javascripts/default-dark.js
+  - javascripts/landing.js
 
 nav:
   - Home: index.md

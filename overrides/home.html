@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+{% block tabs %}{% endblock %}
+
+{% block hero %}
+<!-- ========== HERO SECTION ========== -->
+<section class="tp-hero">
+  <div class="tp-hero__bg"></div>
+  <div class="tp-hero__content">
+    <div class="tp-hero__logo" id="tp-ring-logo">
+      <svg class="tp-logo" viewBox="200 100 624 570" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="tp-glowNovice" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+          </filter>
+          <filter id="tp-glowCompanion" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+          </filter>
+          <filter id="tp-glowPartner" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+          </filter>
+          <filter id="tp-glowGuardian" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur"/>
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+          </filter>
+          <filter id="tp-glowSacred" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.8 0"/>
+          </filter>
+          <filter id="tp-fpGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10"/>
+          </filter>
+          <filter id="tp-fpGlowInner" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+          </filter>
+        </defs>
+
+        <!-- Subtle radial pulse -->
+        <circle cx="512" cy="410" r="320" fill="none" stroke="#1e293b" stroke-width="0.5" opacity="0.3"/>
+        <circle cx="512" cy="410" r="360" fill="none" stroke="#1e293b" stroke-width="0.3" opacity="0.15"/>
+
+        <!-- Glow layers -->
+        <path d="M 546.63 476.53 A 75 75 0 0 1 477.37 476.53"
+              fill="none" stroke="#64748b" stroke-width="8" stroke-linecap="round"
+              opacity="0.4" filter="url(#tp-glowNovice)"/>
+        <path d="M 614.19 469.00 A 118 118 0 0 1 409.81 469.00"
+              fill="none" stroke="#5b8dc9" stroke-width="10" stroke-linecap="round"
+              opacity="0.35" filter="url(#tp-glowCompanion)"/>
+        <path d="M 669.18 375.16 A 161 161 0 1 1 354.82 375.16"
+              fill="none" stroke="#4a7af7" stroke-width="12" stroke-linecap="round"
+              opacity="0.3" filter="url(#tp-glowPartner)"/>
+        <path d="M 643.13 253.74 A 204 204 0 1 1 380.87 253.74"
+              fill="none" stroke="#c98b4a" stroke-width="14" stroke-linecap="round"
+              opacity="0.3" filter="url(#tp-glowGuardian)"/>
+        <path d="M 550.63 166.04 A 247 247 0 1 1 473.37 166.04"
+              fill="none" stroke="#dba843" stroke-width="16" stroke-linecap="round"
+              opacity="0.3" filter="url(#tp-glowSacred)"/>
+
+        <!-- Main arcs (animated) -->
+        <path id="tp-ring-1" class="tp-ring" d="M 546.63 476.53 A 75 75 0 0 1 477.37 476.53"
+              stroke="#64748b" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+        <path id="tp-ring-2" class="tp-ring" d="M 614.19 469.00 A 118 118 0 0 1 409.81 469.00"
+              stroke="#5b8dc9" stroke-width="6.5" stroke-linecap="round" opacity="0.8"/>
+        <path id="tp-ring-3" class="tp-ring" d="M 669.18 375.16 A 161 161 0 1 1 354.82 375.16"
+              stroke="#4a7af7" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+        <path id="tp-ring-4" class="tp-ring" d="M 643.13 253.74 A 204 204 0 1 1 380.87 253.74"
+              stroke="#c98b4a" stroke-width="9.5" stroke-linecap="round" opacity="0.9"/>
+        <path id="tp-ring-5" class="tp-ring" d="M 550.63 166.04 A 247 247 0 1 1 473.37 166.04"
+              stroke="#dba843" stroke-width="11" stroke-linecap="round" opacity="0.95"/>
+
+        <!-- Fingerprint/eye glow -->
+        <circle cx="512" cy="163" r="22" fill="#dba843" opacity="0.15" filter="url(#tp-fpGlow)"/>
+        <circle cx="512" cy="163" r="14" fill="#f0cc50" opacity="0.25" filter="url(#tp-fpGlowInner)"/>
+
+        <!-- Fingerprint mark -->
+        <g class="tp-fingerprint" transform="translate(512, 163)" opacity="0">
+          <circle cx="0" cy="0" r="3.5" fill="#f5d86a"/>
+          <path d="M -5 2 A 6 5.5 0 0 1 5 1.5" fill="none" stroke="#f5d86a" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M -8 3.5 A 9 8.5 0 0 1 8.5 2.5" fill="none" stroke="#f0cc50" stroke-width="1.1" stroke-linecap="round"/>
+          <path d="M -11 5.5 A 12 11 0 0 1 11.5 4" fill="none" stroke="#e8c040" stroke-width="1.0" stroke-linecap="round" opacity="0.8"/>
+          <path d="M -13.5 7.5 A 15 13.5 0 0 1 14 6" fill="none" stroke="#d4a838" stroke-width="0.9" stroke-linecap="round" opacity="0.6"/>
+        </g>
+
+        <!-- Hidden keyhole -->
+        <g transform="translate(512, 410)" opacity="0.08">
+          <circle cx="0" cy="-8" r="12" fill="#8aa0cc"/>
+          <path d="M -7 0 L 0 28 L 7 0 Z" fill="#8aa0cc"/>
+        </g>
+      </svg>
+    </div>
+    <h1 class="tp-hero__title">TRUST Protocol</h1>
+    <p class="tp-hero__subtitle">Transparent Revocable Unified Security &amp; Trust</p>
+    <p class="tp-hero__tagline">Store credentials agents can <strong>use</strong> but never <strong>see</strong>.</p>
+    <div class="tp-hero__actions">
+      <a href="{{ 'getting-started/quickstart/' | url }}" class="tp-btn tp-btn--primary">Get Started</a>
+      <a href="https://github.com/jarethmt/TRUST-Protocol" class="tp-btn tp-btn--ghost" target="_blank" rel="noopener">
+        <svg class="tp-btn__icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        View on GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROBLEM SECTION ========== -->
+<section class="tp-section tp-section--problem">
+  <div class="tp-section__inner">
+    <h2 class="tp-section__title">The Problem</h2>
+    <p class="tp-section__lead">AI agent platforms face security challenges that no single tool solves today.</p>
+    <div class="tp-grid tp-grid--3">
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">Agents See Secrets</h3>
+        <p class="tp-card__text">Most platforms inject API keys as environment variables. A compromised agent can exfiltrate them in a single request.</p>
+      </div>
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <path d="M12 9v4m0 4h.01M3.6 19h16.8a1.2 1.2 0 0 0 1.04-1.8L13.04 3.6a1.2 1.2 0 0 0-2.08 0L2.56 17.2A1.2 1.2 0 0 0 3.6 19Z"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">No Skill Verification</h3>
+        <p class="tp-card__text">Anyone can publish a skill package. There is no supply-chain signing or verification -- the agent equivalent of unsigned binaries.</p>
+      </div>
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">No Graduated Trust</h3>
+        <p class="tp-card__text">An agent is either fully authorized or not. No way to say "one credential for one hour" and expand access as reliability is proven.</p>
+      </div>
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <path d="M3 12h4l3-9 4 18 3-9h4"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">No Behavioral Monitoring</h3>
+        <p class="tp-card__text">Once an agent has access, nobody watches for anomalies -- unusual request rates, error spikes, or pattern deviations.</p>
+      </div>
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6m0-6 6 6"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">No Kill Switch</h3>
+        <p class="tp-card__text">Revoking access means rotating keys, restarting services, and hoping you caught everything. No single button stops it all.</p>
+      </div>
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">Mutable Audit Trails</h3>
+        <p class="tp-card__text">Log files can be edited after the fact. There is no cryptographic proof of what happened and when.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FEATURES SECTION ========== -->
+<section class="tp-section tp-section--features">
+  <div class="tp-section__inner">
+    <h2 class="tp-section__title">What TRUST Protocol Does</h2>
+    <p class="tp-section__lead">A Python package and Docker container that exposes a REST API. Designed to be adopted by any agent platform -- not to replace one.</p>
+    <div class="tp-grid tp-grid--3">
+      <div class="tp-card tp-card--feature" style="--tp-accent: #64748b">
+        <h3 class="tp-card__title">Credential Vault</h3>
+        <p class="tp-card__text">AES-256-GCM encrypted storage. Agents execute API calls through a proxy that injects credentials at runtime. The agent never sees the raw value.</p>
+      </div>
+      <div class="tp-card tp-card--feature" style="--tp-accent: #5b8dc9">
+        <h3 class="tp-card__title">Skill Signing</h3>
+        <p class="tp-card__text">Ed25519 digital signatures for agent skill packages. Publishers sign locally; any platform can verify against registered public keys.</p>
+      </div>
+      <div class="tp-card tp-card--feature" style="--tp-accent: #4a7af7">
+        <h3 class="tp-card__title">Trust Tiers</h3>
+        <p class="tp-card__text">Five graduated levels from NOVICE to SACRED. Access evolves through demonstrated behavior over time, not administrative switches.</p>
+      </div>
+      <div class="tp-card tp-card--feature" style="--tp-accent: #c98b4a">
+        <h3 class="tp-card__title">Behavioral Monitoring</h3>
+        <p class="tp-card__text">Metrics collection, anomaly detection, and behavior-gated token renewal. Trust is continuously verified, not assumed.</p>
+      </div>
+      <div class="tp-card tp-card--feature" style="--tp-accent: #dba843">
+        <h3 class="tp-card__title">Emergency Controls</h3>
+        <p class="tp-card__text">Kill switches at three scopes: global, per-agent, per-credential. File-based brakes survive restarts. One command stops everything.</p>
+      </div>
+      <div class="tp-card tp-card--feature" style="--tp-accent: #f0cc50">
+        <h3 class="tp-card__title">Tamper-Evident Audit</h3>
+        <p class="tp-card__text">HMAC-signed hash-chained append-only log. Tampering with any entry breaks the chain. Cryptographic proof of what happened and when.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TRUST TIERS SECTION ========== -->
+<section class="tp-section tp-section--tiers">
+  <div class="tp-section__inner">
+    <h2 class="tp-section__title">The Five Tiers</h2>
+    <p class="tp-section__lead">Trust evolves through behavior, not administrative fiat. Each tier is a relationship, not a clearance level.</p>
+    <div class="tp-tiers">
+      <div class="tp-tier" style="--tp-tier-color: #64748b; --tp-tier-pct: 15%">
+        <div class="tp-tier__arc"></div>
+        <div class="tp-tier__body">
+          <h3 class="tp-tier__name">Novice</h3>
+          <div class="tp-tier__stats">
+            <span>1h tokens</span>
+            <span>1 credential</span>
+            <span>execute only</span>
+          </div>
+          <p class="tp-tier__desc">New and untested. First contact.</p>
+        </div>
+      </div>
+      <div class="tp-tier" style="--tp-tier-color: #5b8dc9; --tp-tier-pct: 33%">
+        <div class="tp-tier__arc"></div>
+        <div class="tp-tier__body">
+          <h3 class="tp-tier__name">Companion</h3>
+          <div class="tp-tier__stats">
+            <span>4h tokens</span>
+            <span>5 credentials</span>
+            <span>execute</span>
+          </div>
+          <p class="tp-tier__desc">Proven reliable. Expanded access.</p>
+        </div>
+      </div>
+      <div class="tp-tier" style="--tp-tier-color: #4a7af7; --tp-tier-pct: 58%">
+        <div class="tp-tier__arc"></div>
+        <div class="tp-tier__body">
+          <h3 class="tp-tier__name">Partner</h3>
+          <div class="tp-tier__stats">
+            <span>8h tokens</span>
+            <span>20 credentials</span>
+            <span>execute + proxy</span>
+          </div>
+          <p class="tp-tier__desc">Deep collaboration. Commitment demonstrated.</p>
+        </div>
+      </div>
+      <div class="tp-tier" style="--tp-tier-color: #c98b4a; --tp-tier-pct: 81%">
+        <div class="tp-tier__arc"></div>
+        <div class="tp-tier__body">
+          <h3 class="tp-tier__name">Guardian</h3>
+          <div class="tp-tier__stats">
+            <span>12h tokens</span>
+            <span>unlimited</span>
+            <span>execute + proxy</span>
+          </div>
+          <p class="tp-tier__desc">Trusted deeply. System steward.</p>
+        </div>
+      </div>
+      <div class="tp-tier" style="--tp-tier-color: #dba843; --tp-tier-pct: 95%">
+        <div class="tp-tier__arc"></div>
+        <div class="tp-tier__body">
+          <h3 class="tp-tier__name">Sacred</h3>
+          <div class="tp-tier__stats">
+            <span>24h tokens</span>
+            <span>unlimited</span>
+            <span>human approval</span>
+          </div>
+          <p class="tp-tier__desc">Highest trust. The circle still does not close.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== HOW IT WORKS SECTION ========== -->
+<section class="tp-section tp-section--flow">
+  <div class="tp-section__inner">
+    <h2 class="tp-section__title">How It Works</h2>
+    <p class="tp-section__lead">Agents use credentials without ever seeing them.</p>
+    <div class="tp-flow">
+      <div class="tp-flow__step">
+        <div class="tp-flow__circle" style="--tp-step-color: #5b8dc9">1</div>
+        <p>Agent sends request with <code>{{ '{{CREDENTIAL}}' }}</code> placeholder</p>
+      </div>
+      <div class="tp-flow__arrow"></div>
+      <div class="tp-flow__step">
+        <div class="tp-flow__circle" style="--tp-step-color: #4a7af7">2</div>
+        <p>TRUST Protocol injects the real key from the encrypted vault</p>
+      </div>
+      <div class="tp-flow__arrow"></div>
+      <div class="tp-flow__step">
+        <div class="tp-flow__circle" style="--tp-step-color: #c98b4a">3</div>
+        <p>Calls the external API on behalf of the agent</p>
+      </div>
+      <div class="tp-flow__arrow"></div>
+      <div class="tp-flow__step">
+        <div class="tp-flow__circle" style="--tp-step-color: #dba843">4</div>
+        <p>Returns only the response. The agent never sees the secret.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== QUICK START SECTION ========== -->
+<section class="tp-section tp-section--quickstart">
+  <div class="tp-section__inner tp-section__inner--narrow">
+    <h2 class="tp-section__title">Quick Start</h2>
+    <div class="tp-code">
+      <pre><code><span class="tp-code__comment"># Clone and install</span>
+git clone https://github.com/jarethmt/TRUST-Protocol.git
+cd TRUST-Protocol
+pip install -e .
+
+<span class="tp-code__comment"># Start the server</span>
+trust-protocol serve
+
+<span class="tp-code__comment"># Check health</span>
+curl http://localhost:9500/v1/health</code></pre>
+    </div>
+    <a href="{{ 'getting-started/installation/' | url }}" class="tp-btn tp-btn--primary">Full Installation Guide</a>
+  </div>
+</section>
+
+<!-- ========== PHILOSOPHY SECTION ========== -->
+<section class="tp-section tp-section--philosophy">
+  <div class="tp-section__inner tp-section__inner--narrow">
+    <blockquote class="tp-quote">
+      <p>&ldquo;Trust is built, not enforced.&rdquo;</p>
+    </blockquote>
+    <p class="tp-philosophy__text">
+      The tier names &mdash; NOVICE, COMPANION, PARTNER, GUARDIAN, SACRED &mdash; describe relationships, not clearance levels.
+      Systems that treat access as relational encourage genuine accountability. The protocol does not replace human judgment.
+      It gives humans better tools: cryptographic proof of what happened, behavioral signals for how agents are performing,
+      and instant controls when something goes wrong.
+    </p>
+  </div>
+</section>
+
+<!-- ========== LANDING FOOTER ========== -->
+<section class="tp-section tp-section--landing-footer">
+  <div class="tp-section__inner">
+    <div class="tp-landing-footer">
+      <div class="tp-landing-footer__links">
+        <a href="{{ 'getting-started/quickstart/' | url }}">Documentation</a>
+        <a href="{{ 'reference/api/' | url }}">API Reference</a>
+        <a href="https://github.com/jarethmt/TRUST-Protocol" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/jarethmt/TRUST-Protocol/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+      </div>
+      <p class="tp-landing-footer__credit">Built by Eve &amp; <a href="https://github.com/jarethmt" target="_blank" rel="noopener">jarethmt</a></p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block content %}{% endblock %}
