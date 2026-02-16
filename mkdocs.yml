@@ -81,4 +81,6 @@ nav:
     - Architecture: security/architecture.md
     - Known Gaps: security/known-gaps.md
   - Roadmap: roadmap.md
-  - The Logo: design-story.md
+  - Brand:
+    - Identity Guide: brand-identity.md
+    - The Logo: design-story.md
