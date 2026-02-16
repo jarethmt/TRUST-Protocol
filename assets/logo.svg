@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Background gradient -->
+    <radialGradient id="bg" cx="50%" cy="38%" r="65%">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#060a14"/>
+    </radialGradient>
+
+    <!-- Glow filters for each tier -->
+    <filter id="glowNovice" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+    </filter>
+    <filter id="glowCompanion" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+    </filter>
+    <filter id="glowPartner" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+    </filter>
+    <filter id="glowGuardian" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+    </filter>
+    <filter id="glowSacred" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.8 0"/>
+    </filter>
+
+    <!-- Fingerprint glow -->
+    <filter id="fpGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10"/>
+    </filter>
+    <filter id="fpGlowInner" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- Very subtle radial pulse from center -->
+  <circle cx="512" cy="410" r="320" fill="none" stroke="#1e293b" stroke-width="0.5" opacity="0.3"/>
+  <circle cx="512" cy="410" r="360" fill="none" stroke="#1e293b" stroke-width="0.3" opacity="0.15"/>
+
+  <!-- ============================================= -->
+  <!-- GLOW LAYERS (blurred copies behind each arc) -->
+  <!-- ============================================= -->
+
+  <!-- Ring 1 glow: NOVICE (r=75, span=55°) -->
+  <path d="M 546.63 476.53 A 75 75 0 0 1 477.37 476.53"
+        fill="none" stroke="#64748b" stroke-width="8" stroke-linecap="round"
+        opacity="0.4" filter="url(#glowNovice)"/>
+
+  <!-- Ring 2 glow: COMPANION (r=118, span=120°) -->
+  <path d="M 614.19 469.00 A 118 118 0 0 1 409.81 469.00"
+        fill="none" stroke="#5b8dc9" stroke-width="10" stroke-linecap="round"
+        opacity="0.35" filter="url(#glowCompanion)"/>
+
+  <!-- Ring 3 glow: PARTNER (r=161, span=210°) -->
+  <path d="M 669.18 375.16 A 161 161 0 1 1 354.82 375.16"
+        fill="none" stroke="#4a7af7" stroke-width="12" stroke-linecap="round"
+        opacity="0.3" filter="url(#glowPartner)"/>
+
+  <!-- Ring 4 glow: GUARDIAN (r=204, span=290°) -->
+  <path d="M 643.13 253.74 A 204 204 0 1 1 380.87 253.74"
+        fill="none" stroke="#c98b4a" stroke-width="14" stroke-linecap="round"
+        opacity="0.3" filter="url(#glowGuardian)"/>
+
+  <!-- Ring 5 glow: SACRED (r=247, span=342°) -->
+  <path d="M 550.63 166.04 A 247 247 0 1 1 473.37 166.04"
+        fill="none" stroke="#dba843" stroke-width="16" stroke-linecap="round"
+        opacity="0.3" filter="url(#glowSacred)"/>
+
+  <!-- ============================================= -->
+  <!-- MAIN ARC LAYERS (crisp, on top of glows)      -->
+  <!-- ============================================= -->
+
+  <!-- Ring 1: NOVICE - barely an arc, the first tentative step -->
+  <path d="M 546.63 476.53 A 75 75 0 0 1 477.37 476.53"
+        fill="none" stroke="#64748b" stroke-width="5" stroke-linecap="round"
+        opacity="0.7"/>
+
+  <!-- Ring 2: COMPANION - growing, earning trust -->
+  <path d="M 614.19 469.00 A 118 118 0 0 1 409.81 469.00"
+        fill="none" stroke="#5b8dc9" stroke-width="6.5" stroke-linecap="round"
+        opacity="0.8"/>
+
+  <!-- Ring 3: PARTNER - more than half the circle, commitment shown -->
+  <path d="M 669.18 375.16 A 161 161 0 1 1 354.82 375.16"
+        fill="none" stroke="#4a7af7" stroke-width="8" stroke-linecap="round"
+        opacity="0.85"/>
+
+  <!-- Ring 4: GUARDIAN - trusted deeply, nearly complete -->
+  <path d="M 643.13 253.74 A 204 204 0 1 1 380.87 253.74"
+        fill="none" stroke="#c98b4a" stroke-width="9.5" stroke-linecap="round"
+        opacity="0.9"/>
+
+  <!-- Ring 5: SACRED - almost complete, but the gap remains by design -->
+  <path d="M 550.63 166.04 A 247 247 0 1 1 473.37 166.04"
+        fill="none" stroke="#dba843" stroke-width="11" stroke-linecap="round"
+        opacity="0.95"/>
+
+  <!-- ============================================= -->
+  <!-- THE GAP: Human fingerprint element             -->
+  <!-- The deliberate incompleteness. The protocol.   -->
+  <!-- ============================================= -->
+
+  <!-- Outer glow - warm light emanating from the gap -->
+  <circle cx="512" cy="163" r="22" fill="#dba843" opacity="0.15" filter="url(#fpGlow)"/>
+  <circle cx="512" cy="163" r="14" fill="#f0cc50" opacity="0.25" filter="url(#fpGlowInner)"/>
+
+  <!-- Fingerprint mark - stylized concentric arcs suggesting a human print -->
+  <g transform="translate(512, 163)" opacity="0.9">
+    <!-- Core dot -->
+    <circle cx="0" cy="0" r="3.5" fill="#f5d86a"/>
+    <!-- Fingerprint ridges - 4 concentric partial arcs, slightly irregular -->
+    <path d="M -5 2 A 6 5.5 0 0 1 5 1.5" fill="none" stroke="#f5d86a" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M -8 3.5 A 9 8.5 0 0 1 8.5 2.5" fill="none" stroke="#f0cc50" stroke-width="1.1" stroke-linecap="round"/>
+    <path d="M -11 5.5 A 12 11 0 0 1 11.5 4" fill="none" stroke="#e8c040" stroke-width="1.0" stroke-linecap="round" opacity="0.8"/>
+    <path d="M -13.5 7.5 A 15 13.5 0 0 1 14 6" fill="none" stroke="#d4a838" stroke-width="0.9" stroke-linecap="round" opacity="0.6"/>
+  </g>
+
+  <!-- ============================================= -->
+  <!-- CENTER: The void. What the protocol protects.  -->
+  <!-- A faint keyhole - visible only on close look.  -->
+  <!-- ============================================= -->
+  <g transform="translate(512, 410)" opacity="0.08">
+    <circle cx="0" cy="-8" r="12" fill="#8aa0cc"/>
+    <path d="M -7 0 L 0 28 L 7 0 Z" fill="#8aa0cc"/>
+  </g>
+
+  <!-- ============================================= -->
+  <!-- TYPOGRAPHY                                     -->
+  <!-- ============================================= -->
+
+  <!-- TRUST - primary wordmark -->
+  <text x="512" y="748" text-anchor="middle"
+        font-family="'Helvetica Neue', 'Liberation Sans', 'DejaVu Sans', Arial, sans-serif"
+        font-weight="300" font-size="72" letter-spacing="24" fill="#e2e8f4"
+        opacity="0.92">TRUST</text>
+
+  <!-- PROTOCOL - secondary -->
+  <text x="512" y="800" text-anchor="middle"
+        font-family="'Helvetica Neue', 'Liberation Sans', 'DejaVu Sans', Arial, sans-serif"
+        font-weight="300" font-size="28" letter-spacing="14" fill="#64748b"
+        opacity="0.7">PROTOCOL</text>
+
+  <!-- Subtle line between rings and text -->
+  <line x1="432" y1="700" x2="592" y2="700" stroke="#2a3548" stroke-width="1" opacity="0.4"/>
+</svg>

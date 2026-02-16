@@ -1,8 +1,12 @@
-# TRUST Protocol
+<p align="center">
+  <img src="assets/logo.png" alt="TRUST Protocol" width="280"/>
+</p>
 
-**Transparent Revocable Unified Security & Trust**
+<h1 align="center">TRUST Protocol</h1>
 
-A credential broker and trust infrastructure for AI agents. Store credentials agents can **use** but never **see**. Sign and verify agent skills. Monitor behavior. Kill access instantly.
+<p align="center"><strong>Transparent Revocable Unified Security & Trust</strong></p>
+
+<p align="center">A credential broker and trust infrastructure for AI agents.<br/>Store credentials agents can <strong>use</strong> but never <strong>see</strong>. Sign and verify agent skills. Monitor behavior. Kill access instantly.</p>
 
 **[Documentation](https://jarethmt.github.io/TRUST-Protocol/)** | **[Quick Start](https://jarethmt.github.io/TRUST-Protocol/getting-started/quickstart/)** | **[API Reference](https://jarethmt.github.io/TRUST-Protocol/reference/api/)**
 
@@ -163,7 +167,7 @@ Full documentation: **[jarethmt.github.io/TRUST-Protocol](https://jarethmt.githu
 git clone https://github.com/jarethmt/TRUST-Protocol.git
 cd TRUST-Protocol
 pip install -e ".[dev]"
-pytest tests/     # 96 tests
+pytest tests/     # 110 tests
 ruff check trust_protocol/
 ```
 
