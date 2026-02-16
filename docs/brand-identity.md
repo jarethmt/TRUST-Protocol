@@ -90,15 +90,15 @@ The progression from cool to warm is not decorative. It reflects the core philos
 
 ### UI Colors (Documentation Site)
 
-| Name | Hex | Usage |
-|------|-----|-------|
-| **Primary** | `#5c6bc0` | Navigation highlights, buttons |
-| **Primary Light** | `#8e99f3` | Hover states |
-| **Primary Dark** | `#26418f` | Active states |
-| **Accent** | `#7c4dff` | Active links, focus indicators |
-| **Link Purple** | `#b388ff` | Inline links (dark mode) |
-| **Link Hover** | `#e1bee7` | Link hover state (dark mode) |
-| **Code Background** | `#16162a` | Code blocks (dark mode) |
+The documentation site uses colors derived exclusively from the primary palette above. No additional UI-specific colors are introduced.
+
+| Role | Source | Hex | Usage |
+|------|--------|-----|-------|
+| **Primary** | Bright Blue | `#4a7af7` | Navigation highlights, buttons, primary interactive |
+| **Accent** | Gold | `#dba843` | Focus indicators, emphasis states |
+| **Links** | Steel Blue | `#5b8dc9` | Inline links (dark mode) |
+| **Link Hover** | Bright Blue | `#4a7af7` | Link hover state (warms on interaction) |
+| **Code Background** | -- | `#16162a` | Code blocks (dark mode) |
 
 ### Semantic Colors
 

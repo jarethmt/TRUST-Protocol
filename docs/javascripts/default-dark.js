@@ -5,9 +5,9 @@
 (function () {
   var key = __md_get("__palette");
   if (!key) {
-    __md_set("__palette", { index: 0, color: { scheme: "slate", primary: "deep-purple", accent: "purple" } });
+    __md_set("__palette", { index: 0, color: { scheme: "slate", primary: "blue", accent: "amber" } });
     document.body.setAttribute("data-md-color-scheme", "slate");
-    document.body.setAttribute("data-md-color-primary", "deep-purple");
-    document.body.setAttribute("data-md-color-accent", "purple");
+    document.body.setAttribute("data-md-color-primary", "blue");
+    document.body.setAttribute("data-md-color-accent", "amber");
   }
 })();
