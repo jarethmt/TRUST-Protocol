@@ -43,36 +43,55 @@ Every action is logged to an append-only chain. Each entry is HMAC-signed with t
 
 ## Quick Start
 
-### Install from source
+### Install
 
 ```bash
-git clone https://github.com/thoughtspace/trust-protocol.git
-cd trust-protocol
-pip install .
+pip install trust-protocol
 ```
 
-### Start the server
+### One-Command Setup (publishers)
 
 ```bash
+trust-protocol setup
+```
+
+This generates an Ed25519 keypair, registers you as a publisher, and saves everything to `~/.trust-protocol/`. Takes 30 seconds.
+
+### Sign and Publish a Skill
+
+```bash
+# Sign locally (private key never leaves your machine)
+trust-protocol skill sign my-skill 1.0.0 \
+  --publisher-id YOUR_PUB_ID \
+  --code-path ./skill.py \
+  --private-key ~/.trust-protocol/publisher.key
+
+# Publish to the registry
+trust-protocol skill publish signed-manifest.json
+```
+
+### Verify a Skill (No Auth Required)
+
+```bash
+trust-protocol skill verify signed-manifest.json
+# VERIFIED
+#   Publisher: acme-corp
+#   Tier:      COMPANION
+```
+
+### Run Your Own Registry
+
+```bash
+# From source
 trust-protocol serve
-```
 
-The server starts on port 9500. An admin API key is auto-generated and persisted to `./data/.admin_key` on first run. Check the console output or read the file to get it.
-
-### Or run with Docker
-
-```bash
+# Or with Docker
 docker compose up -d
 ```
 
-### Generate signing keys
+The server starts on port 9500. An admin API key is auto-generated and persisted to `./data/.admin_key` on first run.
 
-```bash
-trust-protocol keygen --name my-publisher
-# Creates my-publisher.key (private, chmod 600) and my-publisher.pub (public)
-```
-
-### Check health
+### Check Health
 
 ```bash
 curl http://localhost:9500/v1/health
@@ -130,19 +149,21 @@ curl -X POST http://localhost:9500/v1/credentials/openai_key/proxy-execute \
 
 The server substitutes `{{CREDENTIAL}}` with the real API key, executes the HTTP request, and returns only the upstream response. The agent never sees `sk-...`.
 
-### Sign a Skill
+### Sign a Skill (Locally -- Private Key Never Leaves Your Machine)
 
 ```bash
-curl -X POST http://localhost:9500/v1/skills/sign \
-  -H "X-Admin-Key: YOUR_ADMIN_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "web-scraper",
-    "version": "1.0.0",
-    "publisher_id": "PUBLISHER_ID",
-    "code_hash": "sha256:abc123...",
-    "private_key_pem": "BASE64_ENCODED_PRIVATE_KEY_PEM"
-  }'
+trust-protocol skill sign web-scraper 1.0.0 \
+  --publisher-id PUBLISHER_ID \
+  --code-path ./scraper.py \
+  --private-key ~/.trust-protocol/publisher.key
+# Creates signed-manifest.json locally. No server call.
+```
+
+### Publish a Signed Skill
+
+```bash
+trust-protocol skill publish signed-manifest.json --admin-key YOUR_ADMIN_KEY
+# Server validates your signature before accepting.
 ```
 
 ### Verify a Skill (No Auth Required)
@@ -240,6 +261,25 @@ admin.activate_emergency("Suspicious activity", scope="global")
 admin.emergency_status()
 admin.clear_emergency(scope="global", confirmation="CONFIRM_RESTORE_ACCESS")
 
+# --- Skill signing (local -- private key never leaves your machine) ---
+from trust_protocol.core.skill_signer import hash_code
+
+signed_manifest = TrustProtocolClient.sign_locally(
+    name="my-skill",
+    version="1.0.0",
+    publisher_id="pub_abc123",
+    code_hash=hash_code(open("skill.py", "rb").read()),
+    private_key_pem=open("~/.trust-protocol/publisher.key", "rb").read(),
+)
+# No server call happened -- signing is pure local crypto.
+
+# Publish the signed manifest to the registry
+admin.publish_skill(signed_manifest)
+
+# Anyone can verify (no auth needed)
+result = admin.verify_skill(signed_manifest)
+print(result["verified"])  # True
+
 # --- Audit verification ---
 audit_result = admin.verify_audit()
 print(audit_result)  # {"valid": true, "message": "OK: 47 entries verified"}
@@ -327,12 +367,17 @@ trust-protocol cred list --admin-key KEY
 # Publisher management
 trust-protocol pub register acme-corp --public-key ./acme.pub --admin-key KEY
 
-# Skill signing and verification
+# One-time setup (generates keys, registers publisher)
+trust-protocol setup
+
+# Skill signing (local -- private key never leaves your machine)
 trust-protocol skill sign my-skill 1.0.0 \
   --publisher-id PUB_ID \
   --code-path ./skill.py \
-  --private-key ./publisher.key \
-  --admin-key KEY
+  --private-key ~/.trust-protocol/publisher.key
+
+# Publish signed manifest to registry
+trust-protocol skill publish signed-manifest.json --admin-key KEY
 
 trust-protocol skill verify signed-manifest.json  # No auth required
 
@@ -396,7 +441,7 @@ When the server is running, interactive OpenAPI documentation is available at:
 | GET | `/v1/publishers` | Admin | List publishers |
 | GET | `/v1/publishers/{publisher_id}` | Admin | Get publisher details |
 | POST | `/v1/publishers/{publisher_id}/revoke-key` | Admin | Revoke a publisher's key |
-| POST | `/v1/skills/sign` | Admin | Sign a skill manifest |
+| POST | `/v1/skills/publish` | Admin | Publish a locally-signed manifest |
 | POST | `/v1/skills/verify` | **None** | Verify a signed manifest |
 
 #### Behavior
@@ -519,6 +564,170 @@ trust_protocol/
   cli/
     main.py                # Typer CLI application
 ```
+
+---
+
+## How It Fits Into Agent Platforms
+
+TRUST Protocol is not an agent platform -- it's infrastructure that agent platforms plug into. Here's how it integrates with real-world systems like OpenClaw, ClawHub, or any custom agentic framework:
+
+### The Integration Pattern
+
+```
+  HUMAN OPERATOR                    AGENT PLATFORM                  TRUST PROTOCOL
+  (you)                             (OpenClaw, custom, etc.)        (this project)
+       │                                     │                            │
+       │  1. Deploy TRUST server             │                            │
+       │─────────────────────────────────────────────────────────────────>│
+       │                                     │                            │
+       │  2. Store credentials               │                            │
+       │─────────────────────────────────────────────────────────────────>│
+       │  (API keys, tokens, secrets)        │                            │
+       │                                     │                            │
+       │  3. Register agent                  │                            │
+       │─────────────────────────────────────────────────────────────────>│
+       │                                     │  ◄── returns api_key       │
+       │                                     │                            │
+       │  4. Configure agent with api_key    │                            │
+       │────────────────────────────────────>│                            │
+       │                                     │                            │
+       │                                     │  5. Agent needs credential │
+       │                                     │────────────────────────────>
+       │                                     │  POST /credentials/X/proxy-execute
+       │                                     │  (sends request template)  │
+       │                                     │                            │
+       │                                     │  6. TRUST injects real key │
+       │                                     │  and makes the HTTP call   │
+       │                                     │  ◄─── returns only the     │
+       │                                     │       upstream response    │
+       │                                     │                            │
+       │                                     │  7. Agent submits metrics  │
+       │                                     │────────────────────────────>
+       │                                     │                            │
+       │  8. Human reviews behavior scores   │                            │
+       │────────────────────────────────────────────────────────────────>│
+       │  and promotes/demotes as needed     │                            │
+       │                                     │                            │
+       │  9. Something goes wrong            │                            │
+       │────────────────────────────────────────────────────────────────>│
+       │  POST /emergency/activate           │     ALL ACCESS STOPS       │
+```
+
+### Skill Marketplace Integration (ClawHub, npm-for-agents, etc.)
+
+```
+  SKILL DEVELOPER                MARKETPLACE                     TRUST PROTOCOL
+  (publisher)                    (ClawHub, registry, etc.)       (verification server)
+       │                              │                                │
+       │  1. Generate keypair         │                                │
+       │  (trust-protocol keygen)     │                                │
+       │                              │                                │
+       │  2. Register public key      │                                │
+       │──────────────────────────────────────────────────────────────>│
+       │                              │                                │
+       │  3. Build & sign skill       │                                │
+       │  (trust-protocol skill sign) │                                │
+       │                              │                                │
+       │  4. Upload signed package    │                                │
+       │─────────────────────────────>│                                │
+       │                              │                                │
+       │                              │  5. On install: verify sig     │
+       │                              │───────────────────────────────>│
+       │                              │  POST /skills/verify           │
+       │                              │  (no auth needed!)             │
+       │                              │                                │
+       │                              │  ◄── {verified: true,          │
+       │                              │       publisher: "Acme",       │
+       │                              │       trust_tier: "COMPANION"} │
+       │                              │                                │
+       │                              │  6. Enforce policy:            │
+       │                              │  "only install from PARTNER+"  │
+       │                              │                                │
+       │                              │  --- KEY COMPROMISE ---        │
+       │                              │                                │
+       │  7. Revoke key               │                                │
+       │──────────────────────────────────────────────────────────────>│
+       │                              │                                │
+       │                              │  8. All future verifications   │
+       │                              │───────────────────────────────>│
+       │                              │  ◄── {verified: false,         │
+       │                              │       reason: "Key revoked"}   │
+```
+
+### What This Means In Practice
+
+**For OpenClaw / MCP platforms:**
+- Agents interact with APIs through TRUST Protocol's proxy instead of receiving raw API keys
+- The platform registers each agent once, receives an API key, and configures the agent with it
+- The agent's API key only grants access to TRUST Protocol -- never to the actual credentials
+- If an agent is compromised, one call blocks all its access instantly
+
+**For skill/package marketplaces:**
+- Publishers sign skills with Ed25519 keys registered in the TRUST Protocol
+- The verification endpoint is **public** -- any marketplace, any CI/CD pipeline, any user can verify without an account
+- Publisher trust tiers evolve over time (NOVICE publisher vs. PARTNER publisher with a track record)
+- Key revocation is instant and global -- one call and every verification of that publisher fails
+
+**For enterprise / multi-agent deployments:**
+- Each agent gets its own identity with its own trust tier
+- Behavioral monitoring catches agents that start behaving differently (error spikes, unusual access patterns)
+- The audit chain provides cryptographic proof for compliance: "Agent X accessed credential Y at time Z for purpose W"
+- Emergency brakes provide defense-in-depth at three levels (global, per-agent, per-credential)
+
+---
+
+## Roadmap
+
+### What's Built Today (v0.1.0)
+
+- Encrypted credential vault with zero-knowledge proxy execution
+- Ed25519 skill signing and public verification
+- Five-tier graduated trust system
+- Behavioral monitoring with anomaly detection
+- Three-level emergency controls
+- HMAC-signed hash-chained audit trail
+- Python SDK and CLI
+- Docker packaging
+- 96 tests passing
+
+### What's Coming Next
+
+**v0.2 -- Credential Proxy Hardening**
+- Subprocess-isolated credential execution (the proxy runs in a forked process so the credential never exists in the main process memory)
+- URL allowlisting per credential (credential X can only be used against api.openai.com)
+- Rate limiting per credential and per agent
+- Response filtering (strip credentials that accidentally appear in upstream responses)
+
+**v0.3 -- Multi-User & RBAC**
+- Multiple admin users with role-based access control
+- Organizational boundaries (agents and credentials belong to organizations)
+- Delegated administration (org admins manage their own agents/credentials)
+- OAuth2 / OIDC integration for human authentication
+
+**v0.4 -- Distributed Trust Network**
+- Federation between TRUST Protocol instances (org A trusts publisher keys registered with org B)
+- Publisher reputation scores based on aggregated verification data across instances
+- Revocation propagation across federated instances
+- Trust anchors (root publishers that bootstrap the network)
+
+**v0.5 -- Advanced Behavioral Intelligence**
+- ML-based anomaly detection (replacing threshold-based heuristics)
+- Behavioral fingerprinting (each agent develops a unique behavioral signature)
+- Automatic trust tier recommendations based on behavior history
+- Cross-agent correlation (detect coordinated anomalous behavior)
+
+**v0.6 -- SDK Ecosystem**
+- TypeScript/JavaScript SDK
+- Go SDK
+- Rust SDK
+- OpenAPI client generation for any language
+- MCP (Model Context Protocol) integration adapter
+
+**Future Exploration**
+- Hardware security module (HSM) integration for credential storage
+- Secure enclaves (SGX/TrustZone) for credential proxy execution
+- Verifiable computation proofs (prove the proxy executed what it claimed without revealing the credential)
+- Cross-chain audit anchoring (periodic hash commitments to a public blockchain for independent verifiability)
 
 ---
 

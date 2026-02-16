@@ -24,8 +24,6 @@ Both should be registered in the application factory.
 
 from __future__ import annotations
 
-import base64
-from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -42,8 +40,6 @@ from trust_protocol.core.audit_chain import (
 from trust_protocol.core.skill_signer import (
     PublisherRegistry,
     SignedManifest,
-    SkillManifest,
-    sign_manifest,
     verify_manifest,
 )
 
@@ -71,24 +67,12 @@ class PublisherRevokeRequest(BaseModel):
     reason: str = Field(default="", description="Human-readable revocation reason")
 
 
-class SkillSignRequest(BaseModel):
-    """Request body for signing a skill manifest."""
+class SkillPublishRequest(BaseModel):
+    """Request body for publishing a pre-signed skill manifest."""
 
-    name: str = Field(..., min_length=1)
-    version: str = Field(..., min_length=1)
-    publisher_id: str = Field(..., min_length=1)
-    code_hash: str = Field(
-        ...,
-        min_length=1,
-        description='SHA-256 hash in "sha256:<hex>" format',
-    )
-    capabilities: List[str] = Field(default_factory=list)
-    credentials_required: List[str] = Field(default_factory=list)
-    description: str = ""
-    private_key_pem: str = Field(
-        ...,
-        description="Base64-encoded PEM of the publisher's Ed25519 private key",
-    )
+    manifest: Dict[str, Any]
+    signature: str
+    signed_at: str
 
 
 class SkillVerifyRequest(BaseModel):
@@ -227,72 +211,74 @@ async def revoke_publisher_key(
 router = APIRouter(prefix="/v1/skills", tags=["skills"])
 
 
-@router.post("/sign")
-async def sign_skill(
-    body: SkillSignRequest,
+@router.post("/publish")
+async def publish_skill(
+    body: SkillPublishRequest,
     _admin: None = Depends(require_admin),
     services: dict = Depends(get_services),
 ):
-    """Sign a skill manifest with the publisher's Ed25519 private key.
+    """Publish a pre-signed skill manifest to the registry.
 
-    The private key is provided base64-encoded in the request body.  It is
-    used only for signing and is never stored.  In production, publishers
-    should prefer signing locally with the SDK rather than transmitting
-    their private key over the network.
+    Skills must be signed **locally** by the publisher using their Ed25519
+    private key (via ``trust-protocol skill sign`` or the SDK's
+    ``sign_locally()``).  The private key never leaves the publisher's
+    machine.  This endpoint accepts a signed manifest for registration
+    and validates that the publisher exists, is active, and the signature
+    is cryptographically valid before accepting the publication.
     """
     registry = PublisherRegistry(services["config"].publishers_dir)
     audit: AuditChain = services["audit_chain"]
 
+    # Reconstruct signed manifest.
+    try:
+        signed_manifest = SignedManifest.from_dict({
+            "manifest": body.manifest,
+            "signature": body.signature,
+            "signed_at": body.signed_at,
+        })
+    except (KeyError, ValueError) as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid manifest format: {exc}",
+        )
+
+    publisher_id = signed_manifest.manifest.publisher_id
+
     # Validate publisher exists and is active.
-    publisher = registry.get(body.publisher_id)
+    publisher = registry.get(publisher_id)
     if publisher is None:
         raise HTTPException(status_code=404, detail="Publisher not found")
     if publisher.status != "active":
         raise HTTPException(
             status_code=400,
-            detail=f"Publisher is {publisher.status}; cannot sign skills",
+            detail=f"Publisher is {publisher.status}; cannot publish skills",
         )
 
-    # Build manifest.
-    manifest = SkillManifest(
-        name=body.name,
-        version=body.version,
-        publisher_id=body.publisher_id,
-        code_hash=body.code_hash,
-        capabilities=body.capabilities,
-        credentials_required=body.credentials_required,
-        description=body.description,
-    )
-
-    # Decode private key from base64.
-    try:
-        private_key_pem = base64.b64decode(body.private_key_pem)
-    except Exception:
+    # Verify the signature before accepting publication.
+    public_key_pem = publisher.public_key_pem.encode("utf-8")
+    if not verify_manifest(signed_manifest, public_key_pem):
         raise HTTPException(
             status_code=400,
-            detail="Invalid base64 encoding for private_key_pem",
-        )
-
-    # Sign.
-    try:
-        signed = sign_manifest(manifest, private_key_pem)
-    except Exception as exc:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Signing failed: {exc}",
+            detail="Invalid signature -- skill was not signed by this publisher's key",
         )
 
     audit.log(
         SKILL_SIGNED,
         details={
-            "skill_name": body.name,
-            "skill_version": body.version,
-            "publisher_id": body.publisher_id,
-            "code_hash": body.code_hash,
+            "skill_name": signed_manifest.manifest.name,
+            "skill_version": signed_manifest.manifest.version,
+            "publisher_id": publisher_id,
+            "code_hash": signed_manifest.manifest.code_hash,
+            "publication_method": "local_sign",
         },
     )
 
-    return signed.to_dict()
+    return {
+        "published": True,
+        "manifest": signed_manifest.to_dict(),
+        "publisher_name": publisher.name,
+        "publisher_trust_tier": publisher.trust_tier.name,
+    }
 
 
 @router.post("/verify", response_model=SkillVerifyResponse)

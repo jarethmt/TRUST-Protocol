@@ -465,9 +465,10 @@ class TestSkills:
         assert r.status_code == 200
         assert len(r.json()) >= 1
 
-    def test_full_signing_flow(self, client, admin_headers):
-        """End-to-end: register publisher, sign skill, verify, revoke, re-verify."""
+    def test_full_local_signing_flow(self, client, admin_headers):
+        """End-to-end: register publisher, sign locally, publish, verify, revoke, re-verify."""
         from trust_protocol.core.skill_signer import generate_keypair, hash_code
+        from trust_protocol.sdk import TrustProtocolClient
 
         priv, pub = generate_keypair()
 
@@ -480,26 +481,30 @@ class TestSkills:
         assert r.status_code == 201
         pub_id = r.json()["publisher_id"]
 
-        # 2. Sign a skill
-        r = client.post("/v1/skills/sign", headers=admin_headers, json={
-            "name": "test-skill",
-            "version": "1.0.0",
-            "publisher_id": pub_id,
-            "code_hash": hash_code("print('hello')"),
-            "private_key_pem": base64.b64encode(priv).decode(),
-        })
-        assert r.status_code == 200
-        signed = r.json()
+        # 2. Sign locally (no server call)
+        signed = TrustProtocolClient.sign_locally(
+            name="test-skill",
+            version="1.0.0",
+            publisher_id=pub_id,
+            code_hash=hash_code("print('hello')"),
+            private_key_pem=priv,
+        )
         assert "manifest" in signed
         assert "signature" in signed
 
-        # 3. Verify (no auth required)
+        # 3. Publish to registry
+        r = client.post("/v1/skills/publish", headers=admin_headers, json=signed)
+        assert r.status_code == 200
+        assert r.json()["published"] is True
+        assert r.json()["publisher_name"] == "signing-flow-pub"
+
+        # 4. Verify (no auth required)
         r = client.post("/v1/skills/verify", json=signed)
         assert r.status_code == 200
         assert r.json()["verified"] is True
         assert r.json()["publisher_name"] == "signing-flow-pub"
 
-        # 4. Revoke publisher
+        # 5. Revoke publisher
         r = client.post(
             f"/v1/publishers/{pub_id}/revoke-key",
             headers=admin_headers,
@@ -508,7 +513,7 @@ class TestSkills:
         assert r.status_code == 200
         assert r.json()["status"] == "revoked"
 
-        # 5. Verify fails after revocation
+        # 6. Verify fails after revocation
         r = client.post("/v1/skills/verify", json=signed)
         assert r.status_code == 200
         assert r.json()["verified"] is False
@@ -533,8 +538,10 @@ class TestSkills:
         assert r.status_code == 200
         assert r.json()["verified"] is False
 
-    def test_sign_revoked_publisher(self, client, admin_headers):
+    def test_publish_revoked_publisher(self, client, admin_headers):
+        """Publishing a locally-signed manifest from a revoked publisher should fail."""
         from trust_protocol.core.skill_signer import generate_keypair, hash_code
+        from trust_protocol.sdk import TrustProtocolClient
 
         priv, pub = generate_keypair()
 
@@ -551,13 +558,17 @@ class TestSkills:
             json={"reason": "test"},
         )
 
-        r = client.post("/v1/skills/sign", headers=admin_headers, json={
-            "name": "test-skill",
-            "version": "1.0.0",
-            "publisher_id": pub_id,
-            "code_hash": hash_code("code"),
-            "private_key_pem": base64.b64encode(priv).decode(),
-        })
+        # Sign locally (this works fine -- signing is just math)
+        signed = TrustProtocolClient.sign_locally(
+            name="test-skill",
+            version="1.0.0",
+            publisher_id=pub_id,
+            code_hash=hash_code("code"),
+            private_key_pem=priv,
+        )
+
+        # But publishing to the registry should fail
+        r = client.post("/v1/skills/publish", headers=admin_headers, json=signed)
         assert r.status_code == 400  # Publisher is revoked
 
 

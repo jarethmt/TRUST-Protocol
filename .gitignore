@@ -11,3 +11,6 @@ build/
 venv/
 data/
 *.db
+
+# Generated diagram files (regenerate with: node diagrams/generate-architecture.mjs)
+diagrams/*.excalidraw.json

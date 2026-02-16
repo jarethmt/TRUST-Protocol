@@ -9,12 +9,13 @@ Usage:
     trust-protocol cred store     # Store a credential
     trust-protocol cred list      # List credentials
     trust-protocol pub register   # Register a publisher
-    trust-protocol skill sign     # Sign a skill manifest
+    trust-protocol skill sign     # Sign a skill manifest locally
+    trust-protocol skill publish  # Publish signed manifest to registry
     trust-protocol skill verify   # Verify a signed manifest
+    trust-protocol setup          # Interactive setup wizard
     trust-protocol emergency      # Emergency controls
 """
 
-import base64
 import json
 import sys
 from pathlib import Path
@@ -242,31 +243,63 @@ def skill_sign(
     name: str = typer.Argument(..., help="Skill name"),
     version: str = typer.Argument(..., help="Skill version"),
     publisher_id: str = typer.Option(..., help="Publisher ID"),
-    code_path: Path = typer.Option(..., help="Path to skill code file"),
+    code_path: Path = typer.Option(..., help="Path to skill code file or directory"),
     private_key: Path = typer.Option(..., help="Path to private key PEM file"),
     output: Path = typer.Option("signed-manifest.json", help="Output file"),
-    url: str = typer.Option("http://localhost:9500", help="Server URL"),
-    admin_key: str = typer.Option(..., envvar="TRUST_ADMIN_KEY", help="Admin key"),
+    capabilities: Optional[str] = typer.Option(None, help="Comma-separated capabilities"),
+    credentials: Optional[str] = typer.Option(None, help="Comma-separated required credentials"),
+    description: str = typer.Option("", help="Skill description"),
 ):
-    """Sign a skill manifest."""
+    """Sign a skill manifest locally. The private key never leaves your machine."""
     from trust_protocol.core.skill_signer import hash_code
     from trust_protocol.sdk import TrustProtocolClient
 
     code = code_path.read_bytes()
     code_hash = hash_code(code)
     priv_pem = private_key.read_bytes()
-    priv_b64 = base64.b64encode(priv_pem).decode()
 
-    with TrustProtocolClient(url, admin_key=admin_key) as client:
-        result = client.sign_skill(
-            name=name, version=version, publisher_id=publisher_id,
-            code_hash=code_hash, private_key_pem_b64=priv_b64,
-        )
+    caps = [c.strip() for c in capabilities.split(",")] if capabilities else []
+    creds = [c.strip() for c in credentials.split(",")] if credentials else []
+
+    result = TrustProtocolClient.sign_locally(
+        name=name,
+        version=version,
+        publisher_id=publisher_id,
+        code_hash=code_hash,
+        private_key_pem=priv_pem,
+        capabilities=caps,
+        credentials_required=creds,
+        description=description,
+    )
 
     output.write_text(json.dumps(result, indent=2))
-    console.print(f"[bold green]Skill signed:[/bold green] {name} v{version}")
-    console.print(f"  Code hash: {code_hash}")
-    console.print(f"  Output:    {output}")
+    console.print(f"[bold green]Skill signed locally:[/bold green] {name} v{version}")
+    console.print(f"  Code hash:  {code_hash}")
+    console.print(f"  Output:     {output}")
+    console.print(f"[dim]Private key was used locally and never transmitted.[/dim]")
+
+
+@skill_app.command("publish")
+def skill_publish(
+    manifest_path: Path = typer.Argument(..., help="Path to signed manifest JSON"),
+    url: str = typer.Option("http://localhost:9500", help="Server URL"),
+    admin_key: str = typer.Option(..., envvar="TRUST_ADMIN_KEY", help="Admin key"),
+):
+    """Publish a signed manifest to the registry. Sign locally first with 'skill sign'."""
+    from trust_protocol.sdk import TrustProtocolClient
+
+    manifest = json.loads(manifest_path.read_text())
+
+    with TrustProtocolClient(url, admin_key=admin_key) as client:
+        result = client.publish_skill(manifest)
+
+    if result.get("published"):
+        console.print(f"[bold green]Skill published:[/bold green] {result['manifest']['manifest']['name']}")
+        console.print(f"  Publisher: {result['publisher_name']}")
+        console.print(f"  Tier:      {result['publisher_trust_tier']}")
+    else:
+        console.print(f"[bold red]Publication failed[/bold red]")
+        raise typer.Exit(1)
 
 
 @skill_app.command("verify")
@@ -291,6 +324,132 @@ def skill_verify(
         console.print(f"[bold red]VERIFICATION FAILED[/bold red]")
         console.print(f"  Reason: {result.get('reason')}")
         raise typer.Exit(1)
+
+
+# --- Setup Wizard ---
+
+TRUST_HOME = Path.home() / ".trust-protocol"
+
+
+@app.command("setup")
+def setup(
+    registry_url: str = typer.Option("http://localhost:9500", help="TRUST Protocol registry URL"),
+    admin_key: Optional[str] = typer.Option(None, envvar="TRUST_ADMIN_KEY", help="Admin key (for self-hosted registries)"),
+    name: Optional[str] = typer.Option(None, help="Publisher name (skip interactive prompt)"),
+    organization: Optional[str] = typer.Option(None, help="Organization name"),
+):
+    """Set up TRUST Protocol for skill publishing in one step.
+
+    Generates an Ed25519 keypair, registers you as a publisher, and saves
+    your config to ~/.trust-protocol/. After this, you can sign and
+    publish skills immediately.
+    """
+    from trust_protocol.core.skill_signer import generate_keypair
+
+    console.print()
+    console.print("[bold]TRUST Protocol Setup[/bold]")
+    console.print("[dim]Setting up local signing and publisher registration.[/dim]")
+    console.print()
+
+    # --- Create config directory ---
+    TRUST_HOME.mkdir(parents=True, exist_ok=True)
+
+    config_path = TRUST_HOME / "config.json"
+    priv_path = TRUST_HOME / "publisher.key"
+    pub_path = TRUST_HOME / "publisher.pub"
+
+    # Check for existing setup
+    if config_path.exists():
+        existing = json.loads(config_path.read_text())
+        console.print(f"[yellow]Existing setup found:[/yellow]")
+        console.print(f"  Publisher: {existing.get('publisher_name', 'unknown')}")
+        console.print(f"  ID:        {existing.get('publisher_id', 'unknown')}")
+        console.print(f"  Registry:  {existing.get('registry_url', 'unknown')}")
+        console.print()
+        if not typer.confirm("Overwrite existing setup?", default=False):
+            console.print("[dim]Setup cancelled.[/dim]")
+            raise typer.Exit(0)
+
+    # --- Collect info ---
+    if name is None:
+        name = typer.prompt("Publisher name (your name or org)")
+    if organization is None:
+        organization = typer.prompt("Organization (leave empty if personal)", default="")
+
+    console.print()
+    console.print("[bold]Generating Ed25519 keypair...[/bold]")
+    private_pem, public_pem = generate_keypair()
+
+    priv_path.write_bytes(private_pem)
+    priv_path.chmod(0o600)
+    pub_path.write_bytes(public_pem)
+
+    console.print(f"  Private key: {priv_path} [dim](chmod 600)[/dim]")
+    console.print(f"  Public key:  {pub_path}")
+
+    # --- Register with registry ---
+    publisher_id = None
+    trust_tier = None
+
+    console.print()
+    console.print(f"[bold]Registering with registry at {registry_url}...[/bold]")
+
+    try:
+        import httpx
+
+        headers = {}
+        if admin_key:
+            headers["X-Admin-Key"] = admin_key
+
+        r = httpx.post(
+            f"{registry_url}/v1/publishers",
+            headers=headers,
+            json={
+                "name": name,
+                "organization": organization,
+                "public_key_pem": public_pem.decode(),
+            },
+            timeout=10,
+        )
+
+        if r.status_code == 201:
+            data = r.json()
+            publisher_id = data["publisher_id"]
+            trust_tier = data.get("trust_tier", "NOVICE")
+            console.print(f"  [green]Registered![/green]")
+            console.print(f"  Publisher ID: {publisher_id}")
+            console.print(f"  Trust tier:   {trust_tier}")
+        elif r.status_code == 409:
+            console.print(f"  [yellow]Publisher name '{name}' already exists.[/yellow]")
+            console.print(f"  [dim]You may need to choose a different name.[/dim]")
+        else:
+            console.print(f"  [yellow]Registration returned {r.status_code}[/yellow]")
+            console.print(f"  [dim]{r.text}[/dim]")
+            console.print(f"  [dim]Keys were saved locally. You can register manually later.[/dim]")
+    except Exception as e:
+        console.print(f"  [yellow]Could not reach registry:[/yellow] {e}")
+        console.print(f"  [dim]Keys were saved locally. Register when the registry is available.[/dim]")
+
+    # --- Save config ---
+    config = {
+        "publisher_name": name,
+        "publisher_id": publisher_id,
+        "organization": organization,
+        "trust_tier": trust_tier,
+        "registry_url": registry_url,
+        "private_key_path": str(priv_path),
+        "public_key_path": str(pub_path),
+    }
+    config_path.write_text(json.dumps(config, indent=2))
+
+    console.print()
+    console.print(f"[bold green]Setup complete![/bold green]")
+    console.print(f"  Config saved to: {config_path}")
+    console.print()
+    console.print("[bold]Next steps:[/bold]")
+    console.print(f"  1. Sign a skill:   trust-protocol skill sign my-skill 1.0.0 --publisher-id {publisher_id or 'YOUR_ID'} --code-path ./skill.py --private-key {priv_path}")
+    console.print(f"  2. Publish it:     trust-protocol skill publish signed-manifest.json")
+    console.print(f"  3. Anyone verifies: trust-protocol skill verify signed-manifest.json")
 
 
 # --- Emergency ---

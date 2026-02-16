@@ -257,19 +257,66 @@ class TrustProtocolClient:
         self._raise_for_status(r)
         return r.json()
 
-    def sign_skill(self, name: str, version: str, publisher_id: str,
-                   code_hash: str, private_key_pem_b64: str,
-                   capabilities: Optional[List[str]] = None,
-                   credentials_required: Optional[List[str]] = None,
-                   description: str = "") -> Dict[str, Any]:
-        r = self._client.post("/v1/skills/sign", headers=self._admin_headers(), json={
-            "name": name, "version": version, "publisher_id": publisher_id,
-            "code_hash": code_hash, "private_key_pem": private_key_pem_b64,
-            "capabilities": capabilities or [], "credentials_required": credentials_required or [],
-            "description": description,
-        })
+    def publish_skill(self, signed_manifest: Dict[str, Any]) -> Dict[str, Any]:
+        """Publish a pre-signed skill manifest to the registry.
+
+        The manifest must be signed locally using ``sign_locally()`` before
+        calling this method.  The server validates the publisher and
+        signature before accepting.
+        """
+        r = self._client.post("/v1/skills/publish", headers=self._admin_headers(), json=signed_manifest)
         self._raise_for_status(r)
         return r.json()
+
+    @staticmethod
+    def sign_locally(
+        name: str,
+        version: str,
+        publisher_id: str,
+        code_hash: str,
+        private_key_pem: bytes,
+        capabilities: Optional[List[str]] = None,
+        credentials_required: Optional[List[str]] = None,
+        description: str = "",
+    ) -> Dict[str, Any]:
+        """Sign a skill manifest locally without any server roundtrip.
+
+        The private key never leaves this process.  Returns a dict
+        suitable for passing to ``publish_skill()`` or ``verify_skill()``.
+
+        Parameters
+        ----------
+        name : str
+            Skill name.
+        version : str
+            Skill version (semver recommended).
+        publisher_id : str
+            The publisher ID obtained during registration.
+        code_hash : str
+            SHA-256 hash of the skill code in ``sha256:<hex>`` format.
+            Use ``trust_protocol.core.skill_signer.hash_code()`` to generate.
+        private_key_pem : bytes
+            PEM-encoded Ed25519 private key (PKCS8, unencrypted).
+        capabilities : list, optional
+            Capabilities the skill declares.
+        credentials_required : list, optional
+            Credentials the skill needs to function.
+        description : str, optional
+            Human-readable skill description.
+        """
+        from trust_protocol.core.skill_signer import SkillManifest, sign_manifest
+
+        manifest = SkillManifest(
+            name=name,
+            version=version,
+            publisher_id=publisher_id,
+            code_hash=code_hash,
+            capabilities=capabilities or [],
+            credentials_required=credentials_required or [],
+            description=description,
+        )
+        signed = sign_manifest(manifest, private_key_pem)
+        return signed.to_dict()
 
     def verify_skill(self, signed_manifest: Dict[str, Any]) -> Dict[str, Any]:
         """Verify a signed skill manifest (no auth required)."""
