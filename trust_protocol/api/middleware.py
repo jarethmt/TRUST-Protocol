@@ -12,6 +12,7 @@ from trust_protocol.config import get_config
 from trust_protocol.core.agent_identity import AgentIdentity, AgentRegistry
 from trust_protocol.core.audit_chain import AuditChain
 from trust_protocol.core.emergency import EmergencyController
+from trust_protocol.core.seal import get_seal_manager, reset_seal_manager
 from trust_protocol.core.token_authority import TokenAuthority
 from trust_protocol.core.vault import CredentialVault
 
@@ -32,21 +33,23 @@ def _init_services() -> Dict[str, Any]:
 
     _start_time = time.time()
     cfg = get_config()
+    seal_mgr = get_seal_manager()
 
     emergency = EmergencyController(cfg.data_dir)
     registry = AgentRegistry(cfg.agents_dir)
     token_authority = TokenAuthority(
-        secret_key=cfg.secret_key.encode(),
+        secret_key=cfg.hmac_key.encode(),
         data_dir=cfg.data_dir,
     )
     audit_chain = AuditChain(
         data_dir=cfg.audit_dir,
-        secret_key=cfg.secret_key.encode(),
+        secret_key=cfg.hmac_key.encode(),
     )
     vault = CredentialVault(cfg.credentials_dir)
 
     _services = {
         "config": cfg,
+        "seal_manager": seal_mgr,
         "emergency": emergency,
         "registry": registry,
         "token_authority": token_authority,
@@ -66,6 +69,7 @@ def reset_services() -> None:
     """Reset for testing."""
     global _services
     _services = None
+    reset_seal_manager()
 
 
 # ---------------------------------------------------------------------------

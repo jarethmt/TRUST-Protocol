@@ -13,7 +13,44 @@ When the server is running, interactive OpenAPI documentation is available at:
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET | `/v1/health` | None | Server health, version, uptime |
+| GET | `/v1/health` | None | Server health, version, uptime, seal status |
+
+Response includes a `sealed` field indicating whether the server vault is sealed.
+
+## Seal
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/v1/unseal` | Admin | Unseal the server vault |
+| POST | `/v1/seal` | Admin | Re-seal the server vault |
+| GET | `/v1/seal-status` | **None** | Check seal status |
+
+### Unseal the Server
+
+```bash
+curl -X POST http://localhost:9500/v1/unseal \
+  -H "X-Admin-Key: YOUR_ADMIN_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"password": "your-vault-password"}'
+```
+
+The password is validated against the encrypted vault. If incorrect or the emergency brake is active, the server stays sealed and returns HTTP 400.
+
+### Re-Seal the Server
+
+```bash
+curl -X POST http://localhost:9500/v1/seal \
+  -H "X-Admin-Key: YOUR_ADMIN_KEY"
+```
+
+Clears the vault password from server memory. Credential operations will return 503 until unsealed again.
+
+### Check Seal Status (No Auth)
+
+```bash
+curl http://localhost:9500/v1/seal-status
+# {"sealed": false, "vault_initialized": true}
+```
 
 ## Agents
 

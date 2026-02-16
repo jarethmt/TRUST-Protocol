@@ -24,6 +24,20 @@ with TrustProtocolClient("http://localhost:9500", admin_key="key") as client:
     agents = client.list_agents()
 ```
 
+## Seal Operations
+
+```python
+# Check seal status (no auth required)
+status = admin.seal_status()
+print(status["sealed"])  # True or False
+
+# Unseal the server
+admin.unseal("your-vault-password")
+
+# Re-seal the server (clears password from memory)
+admin.seal()
+```
+
 ## Admin Operations
 
 ### Agent Management

@@ -2,15 +2,24 @@
 
 The credential proxy is the core innovation of TRUST Protocol. It lets agents **use** credentials without **seeing** them.
 
+## Prerequisites
+
+The server must be **unsealed** before any credential operations will work. In production, a human must run `trust-protocol unseal` after server start. In development, set `TRUST_PROTOCOL_VAULT_PASSWORD` for auto-unseal.
+
+If the server is sealed, all credential endpoints return HTTP 503 with the message: *"Server is sealed. Run 'trust-protocol unseal' to unlock credential operations."*
+
+See [Configuration](../reference/configuration.md) for details on sealed vs. auto-unseal modes.
+
 ## How It Works
 
-1. An admin stores a credential in the vault (AES-256-GCM encrypted at rest)
-2. An agent sends a **request template** containing `{{CREDENTIAL}}` placeholders
-3. The server substitutes the real credential value into the template
-4. The server executes the HTTP request
-5. The server returns only the upstream response to the agent
+1. A human unseals the server by providing the vault master password (held in memory only)
+2. An admin stores a credential in the vault (AES-256-GCM encrypted at rest)
+3. An agent sends a **request template** containing `{{CREDENTIAL}}` placeholders
+4. The server substitutes the real credential value into the template
+5. The server executes the HTTP request
+6. The server returns only the upstream response to the agent
 
-The agent never sees the raw credential. The credential exists in server memory only for the duration of the HTTP call.
+The agent never sees the raw credential. The credential exists in server memory only for the duration of the HTTP call. The vault encryption key (derived from the master password) never touches disk -- it exists only in server process memory.
 
 ## Request Template
 

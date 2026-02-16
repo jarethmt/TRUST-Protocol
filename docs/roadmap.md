@@ -3,6 +3,7 @@
 ## What's Built Today (v0.1.0)
 
 - Encrypted credential vault with zero-knowledge proxy execution
+- **Sealed/unsealed vault architecture** (HashiCorp Vault-style human-only master password)
 - Ed25519 skill signing and public verification
 - Five-tier graduated trust system
 - Behavioral monitoring with anomaly detection
@@ -10,7 +11,7 @@
 - HMAC-signed hash-chained audit trail
 - Python SDK and CLI
 - Docker packaging
-- 96 tests passing
+- 110 tests passing
 
 ## What's Coming Next
 
@@ -20,6 +21,7 @@
 - URL allowlisting per credential (credential X can only be used against api.openai.com)
 - Rate limiting per credential and per agent
 - Response filtering (strip credentials that accidentally appear in upstream responses)
+- Process memory hardening (`prctl(PR_SET_DUMPABLE, 0)`, `mlock()`, explicit zeroing on seal)
 - PyPI publication (`pip install trust-protocol`)
 
 ### v0.3 -- Multi-User & RBAC

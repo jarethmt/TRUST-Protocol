@@ -858,3 +858,44 @@ class TestCredentialVault:
         assert result is None
 
         vault.emergency.clear_global("CONFIRM_RESTORE_ACCESS")
+
+
+# =========================================================================
+# Seal Manager
+# =========================================================================
+
+
+class TestSealManager:
+    """Tests for the SealManager singleton."""
+
+    def test_initial_state_is_sealed(self):
+        from trust_protocol.core.seal import SealManager
+
+        mgr = SealManager()
+        assert mgr.is_sealed is True
+        assert mgr.get_vault_password() is None
+
+    def test_unseal_stores_password(self):
+        from trust_protocol.core.seal import SealManager
+
+        mgr = SealManager()
+        mgr.unseal("my-password")
+        assert mgr.is_sealed is False
+        assert mgr.get_vault_password() == "my-password"
+
+    def test_seal_clears_password(self):
+        from trust_protocol.core.seal import SealManager
+
+        mgr = SealManager()
+        mgr.unseal("my-password")
+        mgr.seal()
+        assert mgr.is_sealed is True
+        assert mgr.get_vault_password() is None
+
+    def test_multiple_unseal_calls(self):
+        from trust_protocol.core.seal import SealManager
+
+        mgr = SealManager()
+        mgr.unseal("password-1")
+        mgr.unseal("password-2")
+        assert mgr.get_vault_password() == "password-2"

@@ -2,6 +2,33 @@
 
 TRUST Protocol v0.1.0 is a functional MVP. This document honestly describes what is **not yet hardened**. These are planned improvements, not design flaws.
 
+## Process Memory Reading
+
+**Gap**: After unseal, the vault master password exists in server process memory. An attacker with root access or `ptrace` capability on the host can read `/proc/<pid>/mem` to extract the password.
+
+**Context**: This is an inherent limitation of any in-process secret management, including HashiCorp Vault itself. Any software that holds a secret in memory is vulnerable to a sufficiently privileged attacker on the same machine.
+
+**Current mitigations**:
+
+- The Docker image runs as a non-root `trust` user, reducing the attack surface
+- The password is held in a single `SealManager` object, not scattered across memory
+- The `seal` command explicitly clears the password from memory
+
+**Planned mitigations**:
+
+- `prctl(PR_SET_DUMPABLE, 0)` to prevent core dumps and `/proc/<pid>/mem` reads from non-root
+- Running with `ptrace_scope=2` or higher to restrict ptrace access
+- Memory-safe password handling using `mlock()` and explicit zeroing on seal
+- Container namespace isolation (separate PID namespace prevents `/proc` access from other containers)
+
+**Future exploration**:
+
+- Hardware Security Module (HSM) integration where the encryption key never enters process memory
+- Secure enclave execution (SGX/TrustZone) for the credential proxy
+- Subprocess isolation where the vault password exists only in a short-lived child process
+
+**Honest framing**: If an attacker has root on the host machine, no software-only solution is fully secure. The sealed/unsealed model significantly raises the bar compared to storing the key on disk or in an environment variable, but process memory reading remains a theoretical risk that requires hardware-level solutions to fully eliminate.
+
 ## No URL Allowlisting
 
 **Gap**: The credential proxy will execute HTTP requests to any URL. An agent could potentially use a credential against unintended targets.

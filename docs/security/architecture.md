@@ -6,19 +6,20 @@ This document describes the cryptographic primitives and security design of TRUS
 
 ### Credential Encryption: AES-256-GCM
 
-Credentials are encrypted at rest using AES-256-GCM (Authenticated Encryption with Associated Data). The encryption key is derived from the server secret using a key derivation function.
+Credentials are encrypted at rest using AES-256-GCM (Authenticated Encryption with Associated Data). The encryption key is derived from the **vault master password** using PBKDF2-HMAC-SHA256.
 
 - **Algorithm**: AES-256-GCM
-- **Key derivation**: From `TRUST_PROTOCOL_SECRET_KEY`
+- **Key derivation**: PBKDF2-HMAC-SHA256 from vault master password
 - **Nonce**: Unique per encryption operation
 - **Authentication**: GCM tag prevents tampering
+- **Key source**: Human-provided vault password (never stored on disk)
 
 ### Token Signing: HMAC-SHA256
 
-Access tokens are HMAC-signed with the server secret. This is a symmetric scheme -- the same server that issues tokens validates them.
+Access tokens are HMAC-signed with the HMAC key. This is a symmetric scheme -- the same server that issues tokens validates them.
 
 - **Algorithm**: HMAC-SHA256
-- **Key**: Server secret (`TRUST_PROTOCOL_SECRET_KEY`)
+- **Key**: HMAC key (`TRUST_PROTOCOL_SECRET_KEY`)
 - **Token contents**: Agent ID, trust tier, credential patterns, expiry, renewal count
 
 ### Skill Signing: Ed25519
@@ -38,6 +39,53 @@ Each audit entry is:
 2. Includes the hash of the previous entry
 
 This forms a hash chain where tampering with any entry breaks the chain. The entire chain can be verified with a single API call.
+
+## Sealed/Unsealed Architecture
+
+TRUST Protocol uses a **sealed/unsealed model** inspired by HashiCorp Vault. The vault master password -- the key that encrypts all stored credentials -- is never written to disk, environment variables, or configuration files. It exists only in server process memory after a human provides it.
+
+### How It Works
+
+```
+Server starts → SEALED (credential operations return 503)
+                    ↓
+Human runs: trust-protocol unseal → types password → sends to /v1/unseal
+                    ↓
+Server validates password → holds in RAM → UNSEALED (credential ops work)
+                    ↓
+Server restarts → back to SEALED (password gone from memory)
+```
+
+### Key Separation
+
+The vault master password and the HMAC signing key serve different purposes and are managed independently:
+
+| Key | Purpose | Storage | Protects |
+|-----|---------|---------|----------|
+| **Vault password** | AES-256-GCM credential encryption | Process memory only (after unseal) | Credential secrecy |
+| **HMAC key** | Token signing, audit chain integrity | `TRUST_PROTOCOL_SECRET_KEY` or auto-generated on disk | Token/audit integrity |
+
+This separation means an attacker who reads the HMAC key from disk can forge tokens but **cannot decrypt credentials**. Only reading the vault password from process memory would compromise credential secrecy.
+
+### Operating Modes
+
+**Production (sealed start)**: The server starts sealed. A human must run `trust-protocol unseal` and provide the vault master password interactively. If the server restarts, the password is lost and a human must unseal again.
+
+**Development (auto-unseal)**: Set `TRUST_PROTOCOL_VAULT_PASSWORD` in the environment. The server auto-unseals at startup. This is convenient for development and CI, but the password is visible in the process environment.
+
+### What Works While Sealed
+
+Non-credential operations continue to work while the server is sealed:
+
+- Health checks (`GET /v1/health`)
+- Agent registration and management
+- Token operations
+- Skill signing and verification
+- Audit queries
+- Emergency controls
+- Seal status checks
+
+Only credential operations (store, list, delete, execute, proxy) return HTTP 503 while sealed.
 
 ## Authentication Model
 

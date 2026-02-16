@@ -10,6 +10,8 @@ from fastapi.testclient import TestClient
 # Force test data directory before any imports that read config at module level.
 _test_dir = tempfile.mkdtemp(prefix="trust-test-")
 os.environ["TRUST_PROTOCOL_DATA_DIR"] = _test_dir
+# Enable auto-unseal in test mode so existing tests keep working.
+os.environ["TRUST_PROTOCOL_VAULT_PASSWORD"] = "test-vault-password"
 
 from trust_protocol.config import get_config, reset_config
 from trust_protocol.api.app import create_app
@@ -20,8 +22,9 @@ from trust_protocol.api.middleware import reset_services
 def clean_state(tmp_path):
     """Reset config and services for each test, pointing at a fresh tmp_path."""
     os.environ["TRUST_PROTOCOL_DATA_DIR"] = str(tmp_path)
+    os.environ["TRUST_PROTOCOL_VAULT_PASSWORD"] = "test-vault-password"
     reset_config()
-    reset_services()
+    reset_services()  # Also resets the SealManager via reset_seal_manager()
 
     # The behavior route keeps a module-level _analyzer singleton that must
     # also be cleared between tests so it picks up the new data directory.

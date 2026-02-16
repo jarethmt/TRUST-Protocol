@@ -76,6 +76,28 @@ class TrustProtocolClient:
         self._raise_for_status(r)
         return r.json()
 
+    # -- Seal / Unseal --
+
+    def unseal(self, password: str) -> Dict[str, Any]:
+        """Unseal the server vault.  Requires admin key."""
+        r = self._client.post("/v1/unseal", headers=self._admin_headers(), json={
+            "password": password,
+        })
+        self._raise_for_status(r)
+        return r.json()
+
+    def seal(self) -> Dict[str, Any]:
+        """Re-seal the server vault.  Requires admin key."""
+        r = self._client.post("/v1/seal", headers=self._admin_headers())
+        self._raise_for_status(r)
+        return r.json()
+
+    def seal_status(self) -> Dict[str, Any]:
+        """Check seal status (no auth required)."""
+        r = self._client.get("/v1/seal-status")
+        self._raise_for_status(r)
+        return r.json()
+
     # -- Agents (admin) --
 
     def register_agent(

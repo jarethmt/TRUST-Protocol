@@ -16,6 +16,7 @@ from fastapi.responses import Response
 from pydantic import BaseModel, Field
 
 from trust_protocol.api.middleware import get_services, require_admin, require_agent
+from trust_protocol.core.seal import get_seal_manager
 from trust_protocol.api.schemas import (
     CredentialExecuteRequest,
     CredentialResponse,
@@ -68,14 +69,21 @@ class ProxyValueRequest(BaseModel):
 
 
 def _init_vault(services: Dict[str, Any]) -> CredentialVault:
-    """Unlock the vault using the server secret key.
+    """Unlock the vault using the master password from the seal manager.
 
-    The vault must be initialised before every operation because it may
-    have been locked by an emergency brake clearing or a process restart.
+    Raises HTTP 503 if the server is sealed.  The vault must be
+    initialised before every credential operation because it may have
+    been locked by an emergency brake clearing or a process restart.
     """
+    seal_mgr = get_seal_manager()
+    if seal_mgr.is_sealed:
+        raise HTTPException(
+            status_code=503,
+            detail="Server is sealed. Run 'trust-protocol unseal' to unlock credential operations.",
+        )
+
     vault: CredentialVault = services["vault"]
-    cfg = services["config"]
-    vault.initialize(cfg.secret_key)
+    vault.initialize(seal_mgr.get_vault_password())
     return vault
 
 

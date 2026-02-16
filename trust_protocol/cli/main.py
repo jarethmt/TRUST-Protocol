@@ -49,6 +49,87 @@ def serve(
     )
 
 
+# --- Unseal ---
+
+@app.command("unseal")
+def unseal_cmd(
+    url: str = typer.Option("http://localhost:9500", help="Server URL"),
+    admin_key: str = typer.Option(..., envvar="TRUST_ADMIN_KEY", help="Admin key"),
+):
+    """Unseal the vault on a running server.
+
+    Prompts for the master password interactively.  The password is sent
+    to the server once and held only in server process memory -- never
+    written to disk.
+    """
+    import getpass
+    import httpx
+
+    # Check current seal status
+    try:
+        r = httpx.get(f"{url}/v1/seal-status", timeout=5)
+        status = r.json()
+        if not status["sealed"]:
+            console.print("[yellow]Server is already unsealed.[/yellow]")
+            raise typer.Exit(0)
+    except httpx.ConnectError:
+        console.print("[bold red]Cannot reach server at {url}[/bold red]")
+        raise typer.Exit(1)
+
+    password = getpass.getpass("Vault master password: ")
+    if not password:
+        console.print("[red]Password cannot be empty.[/red]")
+        raise typer.Exit(1)
+
+    try:
+        r = httpx.post(
+            f"{url}/v1/unseal",
+            headers={"X-Admin-Key": admin_key},
+            json={"password": password},
+            timeout=10,
+        )
+        if r.status_code == 200:
+            console.print("[bold green]Vault unsealed successfully.[/bold green]")
+        else:
+            detail = r.json().get("detail", r.text)
+            console.print(f"[bold red]Unseal failed:[/bold red] {detail}")
+            raise typer.Exit(1)
+    except httpx.ConnectError:
+        console.print("[bold red]Cannot reach server.[/bold red]")
+        raise typer.Exit(1)
+
+
+# --- Seal ---
+
+@app.command("seal")
+def seal_cmd(
+    url: str = typer.Option("http://localhost:9500", help="Server URL"),
+    admin_key: str = typer.Option(..., envvar="TRUST_ADMIN_KEY", help="Admin key"),
+):
+    """Re-seal the vault on a running server.
+
+    Clears the master password from server memory.  Credential operations
+    will return 503 until the server is unsealed again.
+    """
+    import httpx
+
+    try:
+        r = httpx.post(
+            f"{url}/v1/seal",
+            headers={"X-Admin-Key": admin_key},
+            timeout=10,
+        )
+        if r.status_code == 200:
+            console.print("[bold green]Server sealed. Credential operations disabled.[/bold green]")
+        else:
+            detail = r.json().get("detail", r.text)
+            console.print(f"[bold red]Seal failed:[/bold red] {detail}")
+            raise typer.Exit(1)
+    except httpx.ConnectError:
+        console.print("[bold red]Cannot reach server.[/bold red]")
+        raise typer.Exit(1)
+
+
 # --- Status ---
 
 @app.command()

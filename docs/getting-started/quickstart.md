@@ -15,7 +15,24 @@ The server starts on port 9500. On first run, it generates and saves an admin ke
 ADMIN_KEY=$(cat data/.admin_key)
 ```
 
-## 2. Register an Agent
+## 2. Unseal the Vault
+
+The server starts **sealed** -- credential operations won't work until you provide the vault master password. This password is never stored on disk; it's held only in server memory.
+
+```bash
+# Interactive password prompt (recommended for production)
+trust-protocol unseal --admin-key $ADMIN_KEY
+# Enter vault password: ********
+```
+
+!!! tip "Development shortcut"
+    For development and CI, set `TRUST_PROTOCOL_VAULT_PASSWORD` before starting the server to skip this step:
+    ```bash
+    export TRUST_PROTOCOL_VAULT_PASSWORD="my-dev-password"
+    trust-protocol serve  # Starts unsealed
+    ```
+
+## 3. Register an Agent
 
 ```bash
 curl -X POST http://localhost:9500/v1/agents \
@@ -39,7 +56,7 @@ Response includes a one-time `api_key`. **Save it** -- it cannot be recovered.
 }
 ```
 
-## 3. Store a Credential
+## 4. Store a Credential
 
 ```bash
 curl -X POST http://localhost:9500/v1/credentials \
@@ -52,7 +69,7 @@ curl -X POST http://localhost:9500/v1/credentials \
   }'
 ```
 
-## 4. Promote the Agent
+## 5. Promote the Agent
 
 New agents start at NOVICE. To access a COMPANION-level credential, promote first:
 
@@ -63,7 +80,7 @@ curl -X PATCH http://localhost:9500/v1/agents/agt_abc123/trust-level \
   -d '{"trust_tier": "COMPANION"}'
 ```
 
-## 5. Execute Through the Credential Proxy
+## 6. Execute Through the Credential Proxy
 
 The agent sends a request template with `{{CREDENTIAL}}` placeholders. The server substitutes the real value, makes the HTTP call, and returns only the response.
 
@@ -87,7 +104,7 @@ curl -X POST http://localhost:9500/v1/credentials/openai_key/proxy-execute \
 
 The agent receives the upstream API response. It never sees `sk-your-real-api-key`.
 
-## 6. Check the Audit Trail
+## 7. Check the Audit Trail
 
 ```bash
 curl http://localhost:9500/v1/audit \

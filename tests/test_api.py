@@ -645,6 +645,126 @@ class TestBehavior:
 
 
 # =========================================================================
+# Seal / Unseal
+# =========================================================================
+
+
+class TestSeal:
+    """Tests for the seal/unseal workflow."""
+
+    def test_seal_status_unsealed(self, client):
+        """Default test env is auto-unsealed via TRUST_PROTOCOL_VAULT_PASSWORD."""
+        r = client.get("/v1/seal-status")
+        assert r.status_code == 200
+        assert r.json()["sealed"] is False
+
+    def test_health_includes_seal_status(self, client):
+        r = client.get("/v1/health")
+        assert r.status_code == 200
+        assert "sealed" in r.json()
+        assert r.json()["sealed"] is False
+
+    def test_credential_ops_fail_when_sealed(self, client, admin_headers):
+        """Credential endpoints should return 503 when server is sealed."""
+        from trust_protocol.core.seal import get_seal_manager
+        get_seal_manager().seal()
+
+        r = client.get("/v1/credentials", headers=admin_headers)
+        assert r.status_code == 503
+
+    def test_non_credential_ops_work_when_sealed(self, client, admin_headers):
+        """Health, agents, audit should work even when sealed."""
+        from trust_protocol.core.seal import get_seal_manager
+        get_seal_manager().seal()
+
+        r = client.get("/v1/health")
+        assert r.status_code == 200
+        assert r.json()["sealed"] is True
+
+        r = client.get("/v1/agents", headers=admin_headers)
+        assert r.status_code == 200
+
+    def test_unseal_with_correct_password(self, client, admin_headers):
+        """Unseal with the correct password should work."""
+        from trust_protocol.core.seal import get_seal_manager
+        get_seal_manager().seal()
+
+        r = client.post("/v1/unseal", headers=admin_headers, json={
+            "password": "test-vault-password",
+        })
+        assert r.status_code == 200
+        assert r.json()["sealed"] is False
+
+        # Verify credentials work again
+        r = client.get("/v1/seal-status")
+        assert r.json()["sealed"] is False
+
+    def test_unseal_with_wrong_password(self, client, admin_headers):
+        """Wrong password after vault has been established should fail."""
+        # Store a credential to establish the password hash
+        client.post("/v1/credentials", headers=admin_headers, json={
+            "name": "test_cred",
+            "credential_data": {"value": "secret"},
+            "minimum_trust": "NOVICE",
+        })
+
+        from trust_protocol.core.seal import get_seal_manager
+        get_seal_manager().seal()
+
+        r = client.post("/v1/unseal", headers=admin_headers, json={
+            "password": "wrong-password",
+        })
+        assert r.status_code == 400
+
+    def test_seal_clears_access(self, client, admin_headers):
+        """Full cycle: store → seal → 503 → unseal → 200."""
+        # Store credential while unsealed
+        r = client.post("/v1/credentials", headers=admin_headers, json={
+            "name": "seal_test",
+            "credential_data": {"value": "secret"},
+            "minimum_trust": "NOVICE",
+        })
+        assert r.status_code == 201
+
+        # Seal
+        r = client.post("/v1/seal", headers=admin_headers)
+        assert r.status_code == 200
+        assert r.json()["sealed"] is True
+
+        # Try to list credentials
+        r = client.get("/v1/credentials", headers=admin_headers)
+        assert r.status_code == 503
+
+        # Unseal
+        r = client.post("/v1/unseal", headers=admin_headers, json={
+            "password": "test-vault-password",
+        })
+        assert r.status_code == 200
+
+        # Now credentials work again
+        r = client.get("/v1/credentials", headers=admin_headers)
+        assert r.status_code == 200
+        creds = r.json()
+        assert any(c["name"] == "seal_test" for c in creds)
+
+    def test_unseal_requires_admin(self, client):
+        """Unseal without admin key should return 401."""
+        r = client.post("/v1/unseal", json={"password": "test"})
+        assert r.status_code == 401
+
+    def test_seal_requires_admin(self, client):
+        """Seal without admin key should return 401."""
+        r = client.post("/v1/seal")
+        assert r.status_code == 401
+
+    def test_seal_status_no_auth_required(self, client):
+        """Seal status should be accessible without authentication."""
+        r = client.get("/v1/seal-status")
+        assert r.status_code == 200
+        assert "sealed" in r.json()
+
+
+# =========================================================================
 # Integration: Cross-Cutting Concerns
 # =========================================================================
 

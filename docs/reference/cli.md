@@ -18,6 +18,21 @@ trust-protocol status
 trust-protocol status --url http://remote-server:9500
 ```
 
+## Seal / Unseal
+
+```bash
+# Unseal the server (interactive password prompt)
+trust-protocol unseal --admin-key KEY
+trust-protocol unseal --admin-key KEY --url http://remote-server:9500
+
+# Re-seal the server (clears password from memory)
+trust-protocol seal --admin-key KEY
+```
+
+The `unseal` command uses an interactive password prompt (`getpass`) so the password never appears in shell history or process arguments.
+
+In production, the server starts sealed. You must unseal it before credential operations will work. If the server restarts, you must unseal again.
+
 ## Setup Wizard
 
 ```bash
