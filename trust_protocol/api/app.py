@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 
 from trust_protocol import __version__
-from trust_protocol.api.routes import agents, audit, credentials, emergency, health, skills, tokens
+from trust_protocol.api.routes import agents, audit, behavior, credentials, emergency, health, skills, tokens
 
 
 def create_app() -> FastAPI:
@@ -25,6 +25,7 @@ def create_app() -> FastAPI:
     app.include_router(credentials.router)
     app.include_router(audit.router)
     app.include_router(emergency.router)
+    app.include_router(behavior.router)
     app.include_router(skills.router)
     app.include_router(skills.publisher_router)
 
