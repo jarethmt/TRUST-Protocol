@@ -34,11 +34,107 @@
   background-color: #16162a;
 }
 
-/* Minimal header - slim and unobtrusive */
+/* ========== BRANDED HEADER ========== */
+
 .md-header {
-  background-color: #12121f;
-  border-bottom: 1px solid rgba(124, 77, 255, 0.12);
+  background: linear-gradient(180deg, #0e0e1c 0%, #12121f 100%);
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg,
+    transparent 0%,
+    #64748b33 15%,
+    #5b8dc944 30%,
+    #4a7af755 50%,
+    #c98b4a44 70%,
+    #dba84333 85%,
+    transparent 100%
+  ) 1;
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Header logo (Five Rings mark) */
+.md-header .md-logo img,
+.md-header .md-logo svg {
+  height: 1.6rem;
+  width: auto;
+}
+
+/* Site name in header - brand typography */
+.md-header__topic:first-child .md-ellipsis {
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: var(--tp-text-primary, #e2e8f4);
+  opacity: 0.92;
+}
+
+/* Page title in header (scrolled state) */
+.md-header__topic:last-child .md-ellipsis {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--tp-text-muted, #7888a4);
+}
+
+/* Search bar */
+[data-md-color-scheme="slate"] .md-search__input {
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+[data-md-color-scheme="slate"] .md-search__input:focus,
+[data-md-color-scheme="slate"] .md-search__input:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(124, 77, 255, 0.25);
+}
+
+[data-md-color-scheme="slate"] .md-search__input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Header icon buttons (theme toggle, search, menu) */
+.md-header__button.md-icon {
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.2s;
+}
+
+.md-header__button.md-icon:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* GitHub source in header */
+.md-header__source {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.md-header__source:hover {
+  opacity: 1;
+}
+
+/* Header on landing page - transparent overlay */
+body:has(.tp-hero) .md-header {
+  background: linear-gradient(180deg, rgba(6, 10, 20, 0.85) 0%, rgba(6, 10, 20, 0.4) 100%);
+  border-image: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   box-shadow: none;
+}
+
+body:has(.tp-hero) .md-header[data-md-state="shadow"] {
+  background: linear-gradient(180deg, #0e0e1c 0%, #12121f 100%);
+  border-image: linear-gradient(90deg,
+    transparent 0%,
+    #64748b33 15%,
+    #5b8dc944 30%,
+    #4a7af755 50%,
+    #c98b4a44 70%,
+    #dba84333 85%,
+    transparent 100%
+  ) 1;
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* Left sidebar styling */
@@ -84,9 +180,30 @@
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Footer */
+/* ========== BRANDED FOOTER ========== */
+
 [data-md-color-scheme="slate"] .md-footer {
-  background-color: #12121f;
+  background: linear-gradient(180deg, #12121f 0%, #0a0a18 100%);
+  border-top: 1px solid transparent;
+  border-image: linear-gradient(90deg,
+    transparent 0%,
+    #64748b22 20%,
+    #4a7af733 50%,
+    #dba84322 80%,
+    transparent 100%
+  ) 1;
+}
+
+[data-md-color-scheme="slate"] .md-footer-meta {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+[data-md-color-scheme="slate"] .md-footer__link {
+  transition: opacity 0.2s;
+}
+
+[data-md-color-scheme="slate"] .md-footer__link:hover {
+  opacity: 0.8;
 }
 
 /* ================================================================
