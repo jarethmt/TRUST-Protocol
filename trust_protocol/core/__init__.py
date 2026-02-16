@@ -4,13 +4,31 @@ from trust_protocol.core.trust_tiers import TrustLevel, TrustTier
 from trust_protocol.core.emergency import EmergencyController
 from trust_protocol.core.token_authority import AgentToken, TokenAuthority
 from trust_protocol.core.vault import CredentialAccessRecord, CredentialVault
+from trust_protocol.core.skill_signer import (
+    Publisher,
+    PublisherRegistry,
+    SignedManifest,
+    SkillManifest,
+    generate_keypair,
+    hash_code,
+    sign_manifest,
+    verify_manifest,
+)
 
 __all__ = [
     "AgentToken",
     "CredentialAccessRecord",
     "CredentialVault",
     "EmergencyController",
+    "Publisher",
+    "PublisherRegistry",
+    "SignedManifest",
+    "SkillManifest",
     "TokenAuthority",
     "TrustLevel",
     "TrustTier",
+    "generate_keypair",
+    "hash_code",
+    "sign_manifest",
+    "verify_manifest",
 ]

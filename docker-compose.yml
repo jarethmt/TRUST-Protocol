@@ -1,0 +1,19 @@
+services:
+  trust-protocol:
+    build: .
+    container_name: trust-protocol
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9500:9500"
+    volumes:
+      - trust-data:/app/data
+    environment:
+      - TRUST_PROTOCOL_DATA_DIR=/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9500/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  trust-data:
