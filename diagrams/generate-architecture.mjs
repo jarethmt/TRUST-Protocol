@@ -563,7 +563,7 @@ elements.push(text("flow-audit-label", arrowAudit_startX + 6, arrowAudit_startY 
 const scene = {
   type: "excalidraw",
   version: 2,
-  source: "https://draw.thoughtspacedesigns.com",
+  source: "https://excalidraw.com",
   elements,
   appState: {
     gridSize: null,

@@ -17,7 +17,7 @@ FROM python:3.12-slim
 
 LABEL org.opencontainers.image.title="trust-protocol" \
       org.opencontainers.image.description="TRUST Protocol: Transparent Revocable Unified Security & Trust" \
-      org.opencontainers.image.source="https://github.com/thoughtspace/trust-protocol"
+      org.opencontainers.image.source="https://github.com/trustprotocol/trust-protocol"
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl && \

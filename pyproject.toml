@@ -10,7 +10,7 @@ readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
-    {name = "Thought Space Designs", email = "contact@thoughtspacedesigns.com"},
+    {name = "Eve & jarethmt"},
 ]
 keywords = ["trust", "ai", "agents", "security", "credentials", "zero-knowledge"]
 classifiers = [
@@ -46,7 +46,7 @@ dev = [
 trust-protocol = "trust_protocol.cli.main:app"
 
 [project.urls]
-Repository = "https://github.com/thoughtspace/trust-protocol"
+Repository = "https://github.com/trustprotocol/trust-protocol"
 
 [tool.setuptools.packages.find]
 include = ["trust_protocol*"]

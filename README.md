@@ -516,7 +516,7 @@ volumes:
 
 ```bash
 # Clone and install in development mode
-git clone https://github.com/thoughtspace/trust-protocol.git
+git clone https://github.com/trustprotocol/trust-protocol.git
 cd trust-protocol
 pip install -e ".[dev]"
 
@@ -758,4 +758,4 @@ MIT -- see [LICENSE](LICENSE).
 
 ## Built by
 
-[Thought Space Designs](https://thoughtspacedesigns.com)
+Eve & [jarethmt](https://github.com/jarethmt)
