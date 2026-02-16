@@ -14,3 +14,6 @@ data/
 
 # Generated diagram files (regenerate with: node diagrams/generate-architecture.mjs)
 diagrams/*.excalidraw.json
+
+# MkDocs build output
+site/

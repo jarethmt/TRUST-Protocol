@@ -40,6 +40,7 @@ dev = [
     "pytest-asyncio>=0.21.0",
     "httpx>=0.25.0",
     "ruff>=0.1.0",
+    "mkdocs-material>=9.0.0",
 ]
 
 [project.scripts]
@@ -47,6 +48,7 @@ trust-protocol = "trust_protocol.cli.main:app"
 
 [project.urls]
 Repository = "https://github.com/jarethmt/TRUST-Protocol"
+Documentation = "https://jarethmt.github.io/TRUST-Protocol/"
 
 [tool.setuptools.packages.find]
 include = ["trust_protocol*"]
