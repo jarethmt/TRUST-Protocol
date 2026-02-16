@@ -7,13 +7,15 @@ repo_name: jarethmt/TRUST-Protocol
 theme:
   name: material
   palette:
-    - scheme: slate
+    - media: "(prefers-color-scheme)"
+      scheme: slate
       primary: deep purple
       accent: purple
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-    - scheme: default
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: indigo
       accent: deep purple
       toggle:
@@ -53,6 +55,9 @@ markdown_extensions:
 
 extra_css:
   - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/default-dark.js
 
 nav:
   - Home: index.md
