@@ -516,7 +516,7 @@ volumes:
 
 ```bash
 # Clone and install in development mode
-git clone https://github.com/trustprotocol/trust-protocol.git
+git clone https://github.com/jarethmt/TRUST-Protocol.git
 cd trust-protocol
 pip install -e ".[dev]"
 

@@ -46,7 +46,7 @@ dev = [
 trust-protocol = "trust_protocol.cli.main:app"
 
 [project.urls]
-Repository = "https://github.com/trustprotocol/trust-protocol"
+Repository = "https://github.com/jarethmt/TRUST-Protocol"
 
 [tool.setuptools.packages.find]
 include = ["trust_protocol*"]
