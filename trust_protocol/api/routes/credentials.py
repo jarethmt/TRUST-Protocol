@@ -31,7 +31,11 @@ from trust_protocol.core.audit_chain import (
     CREDENTIAL_STORED,
     AuditChain,
 )
-from trust_protocol.core.credential_proxy import CredentialProxy, RequestTemplate
+from trust_protocol.core.credential_proxy import (
+    CredentialProxy,
+    DomainNotAllowedError,
+    RequestTemplate,
+)
 from trust_protocol.core.trust_tiers import TrustTier, can_access
 from trust_protocol.core.vault import CredentialVault
 
@@ -108,7 +112,10 @@ async def store_credential(
     audit: AuditChain = services["audit_chain"]
 
     trust_tier = TrustTier[body.minimum_trust]
-    success = vault.store_credential(body.name, body.credential_data, trust_tier)
+    success = vault.store_credential(
+        body.name, body.credential_data, trust_tier,
+        allowed_domains=body.allowed_domains,
+    )
     if not success:
         raise HTTPException(
             status_code=503,
@@ -266,6 +273,10 @@ async def proxy_execute_credential(
 
     cred_data, _record = result
 
+    # Look up allowed_domains for this credential.
+    cred_meta = vault.get_credential_metadata(name)
+    allowed_domains = cred_meta.get("allowed_domains", []) if cred_meta else []
+
     # Build the request template from the body.
     template = RequestTemplate(
         method=body.method,
@@ -286,12 +297,33 @@ async def proxy_execute_credential(
         credential_value = str(cred_data)
 
     # Execute via the proxy -- the agent never receives the credential.
-    execution_result = await _proxy.execute(
-        template=template,
-        credential_value=credential_value,
-        credential_name=name,
-        agent_id=agent.agent_id,
-    )
+    # The proxy checks allowed_domains BEFORE injecting the credential.
+    try:
+        execution_result = await _proxy.execute(
+            template=template,
+            credential_value=credential_value,
+            credential_name=name,
+            agent_id=agent.agent_id,
+            allowed_domains=allowed_domains,
+        )
+    except DomainNotAllowedError as exc:
+        audit.log(
+            CREDENTIAL_EXECUTE,
+            agent.agent_id,
+            {
+                "name": name,
+                "granted": False,
+                "purpose": body.purpose,
+                "reason": str(exc),
+                "blocked_domain": exc.domain,
+            },
+        )
+        raise HTTPException(
+            status_code=403,
+            detail=f"Domain not allowed: '{exc.domain}' is not in the "
+                   f"allowed domains for credential '{name}'. "
+                   f"Allowed: {exc.allowed}",
+        )
 
     audit.log(
         CREDENTIAL_EXECUTE,

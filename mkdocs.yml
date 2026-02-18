@@ -82,6 +82,7 @@ nav:
   - Deployment:
     - Docker: deployment/docker.md
   - Security:
+    - How It Keeps You Safe: security/model.md
     - Architecture: security/architecture.md
     - Known Gaps: security/known-gaps.md
   - Roadmap: roadmap.md

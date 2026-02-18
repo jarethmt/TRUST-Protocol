@@ -80,11 +80,20 @@ class CredentialStoreRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=128)
     credential_data: Dict[str, Any]
     minimum_trust: str = Field(default="COMPANION", pattern="^(NOVICE|COMPANION|PARTNER|GUARDIAN|SACRED)$")
+    allowed_domains: List[str] = Field(
+        default_factory=list,
+        description=(
+            "Domain patterns this credential may be proxied to. "
+            "Supports wildcards (e.g. '*.openai.com'). "
+            "Empty list means unrestricted."
+        ),
+    )
 
 
 class CredentialResponse(BaseModel):
     name: str
     minimum_trust: str
+    allowed_domains: List[str] = Field(default_factory=list)
     created: str
     last_accessed: Optional[str] = None
     access_count: int = 0

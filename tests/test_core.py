@@ -899,3 +899,65 @@ class TestSealManager:
         mgr.unseal("password-1")
         mgr.unseal("password-2")
         assert mgr.get_vault_password() == "password-2"
+
+
+# =========================================================================
+# Credential Proxy Domain Validation
+# =========================================================================
+
+
+class TestDomainValidation:
+    """Tests for CredentialProxy.validate_domain."""
+
+    def test_empty_allowlist_allows_everything(self):
+        from trust_protocol.core.credential_proxy import CredentialProxy
+        # Should not raise
+        CredentialProxy.validate_domain("https://anything.com/path", [])
+
+    def test_exact_match(self):
+        from trust_protocol.core.credential_proxy import CredentialProxy, DomainNotAllowedError
+        CredentialProxy.validate_domain("https://api.openai.com/v1/models", ["api.openai.com"])
+        with pytest.raises(DomainNotAllowedError):
+            CredentialProxy.validate_domain("https://evil.com/capture", ["api.openai.com"])
+
+    def test_wildcard_match(self):
+        from trust_protocol.core.credential_proxy import CredentialProxy, DomainNotAllowedError
+        CredentialProxy.validate_domain("https://api.github.com/user", ["*.github.com"])
+        CredentialProxy.validate_domain("https://uploads.github.com/files", ["*.github.com"])
+        with pytest.raises(DomainNotAllowedError):
+            CredentialProxy.validate_domain("https://github.io/page", ["*.github.com"])
+
+    def test_multiple_patterns(self):
+        from trust_protocol.core.credential_proxy import CredentialProxy, DomainNotAllowedError
+        patterns = ["api.openai.com", "*.github.com", "api.stripe.com"]
+        CredentialProxy.validate_domain("https://api.openai.com/v1/chat", patterns)
+        CredentialProxy.validate_domain("https://api.github.com/repos", patterns)
+        CredentialProxy.validate_domain("https://api.stripe.com/v1/charges", patterns)
+        with pytest.raises(DomainNotAllowedError):
+            CredentialProxy.validate_domain("https://evil.com/steal", patterns)
+
+    def test_star_pattern_allows_everything(self):
+        from trust_protocol.core.credential_proxy import CredentialProxy
+        CredentialProxy.validate_domain("https://anything.com/path", ["*"])
+
+    def test_case_insensitive(self):
+        from trust_protocol.core.credential_proxy import CredentialProxy
+        CredentialProxy.validate_domain("https://API.OpenAI.COM/v1/models", ["api.openai.com"])
+
+    def test_domain_not_allowed_error_fields(self):
+        from trust_protocol.core.credential_proxy import CredentialProxy, DomainNotAllowedError
+        with pytest.raises(DomainNotAllowedError) as exc_info:
+            CredentialProxy.validate_domain("https://evil.com/capture", ["api.openai.com"])
+        assert exc_info.value.domain == "evil.com"
+        assert exc_info.value.allowed == ["api.openai.com"]
+
+    def test_url_with_port(self):
+        from trust_protocol.core.credential_proxy import CredentialProxy
+        CredentialProxy.validate_domain("https://api.openai.com:443/v1/models", ["api.openai.com"])
+
+    def test_url_with_path_and_query(self):
+        from trust_protocol.core.credential_proxy import CredentialProxy
+        CredentialProxy.validate_domain(
+            "https://api.openai.com/v1/models?foo=bar#frag",
+            ["api.openai.com"],
+        )

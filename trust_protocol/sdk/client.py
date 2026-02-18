@@ -190,11 +190,20 @@ class TrustProtocolClient:
     # -- Credentials (admin + agent) --
 
     def store_credential(
-        self, name: str, credential_data: Dict[str, Any], minimum_trust: str = "COMPANION",
+        self,
+        name: str,
+        credential_data: Dict[str, Any],
+        minimum_trust: str = "COMPANION",
+        allowed_domains: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
-        r = self._client.post("/v1/credentials", headers=self._admin_headers(), json={
-            "name": name, "credential_data": credential_data, "minimum_trust": minimum_trust,
-        })
+        payload: Dict[str, Any] = {
+            "name": name,
+            "credential_data": credential_data,
+            "minimum_trust": minimum_trust,
+        }
+        if allowed_domains:
+            payload["allowed_domains"] = allowed_domains
+        r = self._client.post("/v1/credentials", headers=self._admin_headers(), json=payload)
         self._raise_for_status(r)
         return r.json()
 

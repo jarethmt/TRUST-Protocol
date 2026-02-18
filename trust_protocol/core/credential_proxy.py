@@ -23,6 +23,9 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional
 
+import fnmatch
+from urllib.parse import urlparse
+
 import httpx
 
 logger = logging.getLogger(__name__)
@@ -144,6 +147,18 @@ class ProxyValueToken:
 PLACEHOLDER_PATTERN = re.compile(r"\{\{CREDENTIAL\}\}")
 
 
+class DomainNotAllowedError(Exception):
+    """Raised when a proxy request targets a domain not in the allowlist."""
+
+    def __init__(self, domain: str, allowed: list):
+        self.domain = domain
+        self.allowed = allowed
+        super().__init__(
+            f"Domain '{domain}' is not in the allowed list for this credential. "
+            f"Allowed: {allowed}"
+        )
+
+
 class CredentialProxy:
     """Executes HTTP requests with credential injection.
 
@@ -161,19 +176,56 @@ class CredentialProxy:
         """Replace ``{{CREDENTIAL}}`` placeholders with the actual value."""
         return PLACEHOLDER_PATTERN.sub(credential_value, template_str)
 
+    @staticmethod
+    def validate_domain(url: str, allowed_domains: list[str]) -> None:
+        """Check that *url* targets a domain in the allowlist.
+
+        Raises ``DomainNotAllowedError`` if the domain is not permitted.
+        Does nothing if *allowed_domains* is empty (unrestricted).
+
+        Supports wildcard patterns via ``fnmatch``:
+        - ``"api.openai.com"`` -- exact match
+        - ``"*.openai.com"`` -- any subdomain of openai.com
+        - ``"*"`` -- allow everything (same as empty list)
+        """
+        if not allowed_domains:
+            return  # Unrestricted
+
+        parsed = urlparse(url)
+        domain = parsed.hostname or ""
+
+        for pattern in allowed_domains:
+            if pattern == "*":
+                return
+            if fnmatch.fnmatch(domain, pattern.lower()):
+                return
+
+        raise DomainNotAllowedError(domain, allowed_domains)
+
     async def execute(
         self,
         template: RequestTemplate,
         credential_value: str,
         credential_name: str,
         agent_id: str,
+        allowed_domains: Optional[list[str]] = None,
     ) -> ExecutionResult:
         """Execute an HTTP request with the credential injected.
 
         The credential value is substituted into URL, headers, and body
         wherever ``{{CREDENTIAL}}`` appears. The agent never sees the raw
         credential -- only the HTTP response is returned.
+
+        If *allowed_domains* is provided, the target URL is validated
+        against the allowlist **before** the credential is injected.
+        This prevents a rogue agent from routing credentials to
+        unauthorized servers.
         """
+        # --- Domain binding enforcement ---
+        # Check BEFORE injecting the credential so the raw value never
+        # even enters memory for an unauthorized destination.
+        self.validate_domain(template.url, allowed_domains or [])
+
         start = time.monotonic()
 
         # Inject credential into URL

@@ -29,11 +29,18 @@ TRUST Protocol v0.1.0 is a functional MVP. This document honestly describes what
 
 **Honest framing**: If an attacker has root on the host machine, no software-only solution is fully secure. The sealed/unsealed model significantly raises the bar compared to storing the key on disk or in an environment variable, but process memory reading remains a theoretical risk that requires hardware-level solutions to fully eliminate.
 
-## No URL Allowlisting
+## ~~No URL Allowlisting~~ -- RESOLVED (v0.1.1)
 
-**Gap**: The credential proxy will execute HTTP requests to any URL. An agent could potentially use a credential against unintended targets.
+Per-credential URL allowlists are now implemented. When storing a credential, admins can specify which domains the credential may be proxied to:
 
-**Planned fix (v0.2)**: Per-credential URL allowlists. Example: "The `openai_key` credential can only be used against `api.openai.com`."
+```bash
+trust-protocol cred store openai_key --value "sk-..." \
+  --allowed-domains "api.openai.com"
+```
+
+The proxy validates the target URL **before** injecting the credential. If the domain doesn't match the allowlist, the request is rejected with a 403 and the credential value never enters the request pipeline. Supports wildcard patterns (`*.github.com`). Credentials stored without `--allowed-domains` remain unrestricted for backwards compatibility.
+
+See [Security Model](../security/model.md) for the full explanation of how domain binding protects against credential routing attacks.
 
 ## No Response Filtering
 

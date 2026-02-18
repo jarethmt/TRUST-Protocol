@@ -284,8 +284,17 @@ class CredentialVault:
         name: str,
         credential_data: Dict[str, Any],
         minimum_trust: TrustLevel = TrustLevel.COMPANION,
+        allowed_domains: Optional[List[str]] = None,
     ) -> bool:
         """Encrypt and persist a credential with a minimum trust requirement.
+
+        Parameters
+        ----------
+        allowed_domains:
+            Optional list of domain patterns that this credential may be
+            sent to via the proxy.  Supports wildcards, e.g.
+            ``["*.openai.com", "api.github.com"]``.  If ``None`` or empty,
+            the credential is **unrestricted** (any URL is allowed).
 
         Returns ``False`` if the emergency brake is active.
         """
@@ -297,6 +306,7 @@ class CredentialVault:
         credentials[name] = {
             "data": credential_data,
             "minimum_trust": minimum_trust.name,
+            "allowed_domains": allowed_domains or [],
             "created": datetime.now(timezone.utc).isoformat(),
             "last_accessed": None,
             "access_count": 0,
@@ -306,6 +316,7 @@ class CredentialVault:
         self._write_audit("CREDENTIAL_STORED", {
             "name": name,
             "minimum_trust": minimum_trust.name,
+            "allowed_domains": allowed_domains or [],
         })
         return True
 
@@ -384,7 +395,8 @@ class CredentialVault:
         """Return metadata for every stored credential (never the values).
 
         Each entry contains the credential name, minimum trust tier,
-        creation time, last access time, and total access count.
+        allowed domains, creation time, last access time, and total access
+        count.
         """
         self._require_unlocked()
         credentials = self._load_credentials()
@@ -393,11 +405,31 @@ class CredentialVault:
             result.append({
                 "name": name,
                 "minimum_trust": info["minimum_trust"],
+                "allowed_domains": info.get("allowed_domains", []),
                 "created": info["created"],
                 "last_accessed": info["last_accessed"],
                 "access_count": info["access_count"],
             })
         return result
+
+    def get_credential_metadata(self, name: str) -> Optional[Dict[str, Any]]:
+        """Return metadata for a single credential (never the value).
+
+        Returns ``None`` if the credential does not exist.
+        """
+        self._require_unlocked()
+        credentials = self._load_credentials()
+        if name not in credentials:
+            return None
+        info = credentials[name]
+        return {
+            "name": name,
+            "minimum_trust": info["minimum_trust"],
+            "allowed_domains": info.get("allowed_domains", []),
+            "created": info["created"],
+            "last_accessed": info["last_accessed"],
+            "access_count": info["access_count"],
+        }
 
     def delete_credential(self, name: str) -> bool:
         """Remove a credential from the vault.

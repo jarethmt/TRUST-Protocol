@@ -375,23 +375,44 @@ def cred_store(
     name: str = typer.Argument(..., help="Credential name"),
     value: str = typer.Option(..., help="Credential value (or JSON object)"),
     minimum_trust: str = typer.Option("COMPANION", help="Minimum trust tier"),
+    allowed_domains: Optional[str] = typer.Option(
+        None, "--allowed-domains",
+        help="Comma-separated domain patterns (e.g. 'api.openai.com,*.github.com'). "
+             "Empty means unrestricted.",
+    ),
     url: str = typer.Option("http://localhost:9500", help="Server URL"),
     admin_key: str = typer.Option(..., envvar="TRUST_ADMIN_KEY", help="Admin key"),
 ):
-    """Store a credential in the vault."""
+    """Store a credential in the vault.
+
+    Use --allowed-domains to restrict which URLs this credential can
+    be proxied to.  Supports wildcards (e.g. '*.openai.com').  If
+    omitted, the credential is unrestricted.
+
+    Example:
+
+        trust-protocol cred store openai_key --value "sk-..." \\
+          --allowed-domains "api.openai.com"
+    """
     # Try to parse as JSON, fallback to simple value
     try:
         data = json.loads(value)
     except json.JSONDecodeError:
         data = {"value": value}
 
+    domains = [d.strip() for d in allowed_domains.split(",")] if allowed_domains else []
+
     try:
         with _client(url, admin_key=admin_key) as c:
-            result = c.store_credential(name, data, minimum_trust.upper())
+            result = c.store_credential(name, data, minimum_trust.upper(), allowed_domains=domains)
     except Exception as e:
         _handle_error(e)
 
     console.print(f"[bold green]Credential stored:[/bold green] {result['name']} (min trust: {result['minimum_trust']})")
+    if domains:
+        console.print(f"  Allowed domains: {', '.join(domains)}")
+    else:
+        console.print(f"  Allowed domains: [yellow]unrestricted[/yellow]")
 
 
 @cred_app.command("list")
@@ -409,11 +430,14 @@ def cred_list(
     table = Table(title="Stored Credentials")
     table.add_column("Name", style="cyan")
     table.add_column("Min Trust", style="green")
+    table.add_column("Allowed Domains")
     table.add_column("Access Count")
     table.add_column("Created")
 
     for cr in creds:
-        table.add_row(cr["name"], cr["minimum_trust"], str(cr["access_count"]), cr.get("created", ""))
+        domains = cr.get("allowed_domains", [])
+        domain_str = ", ".join(domains) if domains else "[yellow]*[/yellow]"
+        table.add_row(cr["name"], cr["minimum_trust"], domain_str, str(cr["access_count"]), cr.get("created", ""))
 
     console.print(table)
 

