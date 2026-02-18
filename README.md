@@ -8,7 +8,7 @@
 
 <p align="center">A credential broker and trust infrastructure for AI agents.<br/>Store credentials agents can <strong>use</strong> but never <strong>see</strong>. Sign and verify agent skills. Monitor behavior. Kill access instantly.</p>
 
-**[Documentation](https://jarethmt.github.io/TRUST-Protocol/)** | **[Quick Start](https://jarethmt.github.io/TRUST-Protocol/getting-started/quickstart/)** | **[API Reference](https://jarethmt.github.io/TRUST-Protocol/reference/api/)**
+**[Documentation](https://agitrust.network/)** | **[Quick Start](https://agitrust.network/getting-started/quickstart/)** | **[API Reference](https://agitrust.network/reference/api/)**
 
 ---
 
@@ -41,10 +41,8 @@ TRUST Protocol is a Python package and Docker container that exposes a REST API.
 ## Quick Start
 
 ```bash
-# Install from source
-git clone https://github.com/jarethmt/TRUST-Protocol.git
-cd TRUST-Protocol
-pip install -e .
+# Install
+curl -fsSL https://agitrust.network/install.sh | bash
 
 # Start the server (admin key auto-generated in ./data/.admin_key)
 trust-protocol serve

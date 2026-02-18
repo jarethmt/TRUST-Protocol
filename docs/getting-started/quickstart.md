@@ -2,6 +2,14 @@
 
 This walkthrough takes you from zero to a working TRUST Protocol setup: running server, registered agent, stored credential, and a proxied API call where the agent never sees the secret.
 
+## 0. Install
+
+```bash
+curl -fsSL https://agitrust.network/install.sh | bash
+```
+
+Or see [Installation](installation.md) for other methods.
+
 ## 1. Start the Server
 
 ```bash

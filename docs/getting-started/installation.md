@@ -1,6 +1,14 @@
 # Installation
 
-## From Source (recommended)
+## One-Line Install
+
+```bash
+curl -fsSL https://agitrust.network/install.sh | bash
+```
+
+This checks for Python 3.10+, pip, and git, then installs the `trust-protocol` CLI and library.
+
+## From Source
 
 ```bash
 git clone https://github.com/jarethmt/TRUST-Protocol.git
