@@ -340,6 +340,24 @@ body:has(.tp-hero) .md-footer {
   font-weight: 600;
 }
 
+.tp-hero__install {
+  margin: 0 0 2rem;
+}
+
+.tp-hero__install-cmd {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+  color: #e2e8f0;
+  letter-spacing: 0.01em;
+  user-select: all;
+  cursor: text;
+}
+
 .tp-hero__actions {
   display: flex;
   gap: 1rem;
