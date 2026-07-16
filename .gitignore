@@ -17,3 +17,4 @@ diagrams/*.excalidraw.json
 
 # MkDocs build output
 site/
+docker-compose.override.yml
