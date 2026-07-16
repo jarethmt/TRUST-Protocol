@@ -1,0 +1,1728 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Store credentials agents can use but never see. A credential broker and trust infrastructure for AI agents.">
+      
+      
+      
+        <link rel="canonical" href="https://agitrust.network/">
+      
+      
+      
+        <link rel="next" href="getting-started/installation/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="assets/logo-mark.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>TRUST Protocol - Credential Broker for AI Agents - TRUST Protocol</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="stylesheets/extra.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="TRUST Protocol" class="md-header__button md-logo" aria-label="TRUST Protocol" data-md-component="logo">
+      
+  <img src="assets/logo-mark.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TRUST Protocol
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              TRUST Protocol - Credential Broker for AI Agents
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/jarethmt/TRUST-Protocol" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jarethmt/TRUST-Protocol
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+<!-- ========== HERO SECTION ========== -->
+<section class="tp-hero">
+  <div class="tp-hero__bg"></div>
+  <div class="tp-hero__content">
+    <div class="tp-hero__logo" id="tp-ring-logo">
+      <svg class="tp-logo" viewBox="200 100 624 570" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="tp-glowNovice" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+          </filter>
+          <filter id="tp-glowCompanion" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+          </filter>
+          <filter id="tp-glowPartner" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+          </filter>
+          <filter id="tp-glowGuardian" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur"/>
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.5 0"/>
+          </filter>
+          <filter id="tp-glowSacred" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.8 0"/>
+          </filter>
+          <filter id="tp-fpGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10"/>
+          </filter>
+          <filter id="tp-fpGlowInner" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+          </filter>
+        </defs>
+
+        <!-- Subtle radial pulse -->
+        <circle cx="512" cy="410" r="320" fill="none" stroke="#1e293b" stroke-width="0.5" opacity="0.3"/>
+        <circle cx="512" cy="410" r="360" fill="none" stroke="#1e293b" stroke-width="0.3" opacity="0.15"/>
+
+        <!-- Glow layers -->
+        <path d="M 546.63 476.53 A 75 75 0 0 1 477.37 476.53"
+              fill="none" stroke="#64748b" stroke-width="8" stroke-linecap="round"
+              opacity="0.4" filter="url(#tp-glowNovice)"/>
+        <path d="M 614.19 469.00 A 118 118 0 0 1 409.81 469.00"
+              fill="none" stroke="#5b8dc9" stroke-width="10" stroke-linecap="round"
+              opacity="0.35" filter="url(#tp-glowCompanion)"/>
+        <path d="M 669.18 375.16 A 161 161 0 1 1 354.82 375.16"
+              fill="none" stroke="#4a7af7" stroke-width="12" stroke-linecap="round"
+              opacity="0.3" filter="url(#tp-glowPartner)"/>
+        <path d="M 643.13 253.74 A 204 204 0 1 1 380.87 253.74"
+              fill="none" stroke="#c98b4a" stroke-width="14" stroke-linecap="round"
+              opacity="0.3" filter="url(#tp-glowGuardian)"/>
+        <path d="M 550.63 166.04 A 247 247 0 1 1 473.37 166.04"
+              fill="none" stroke="#dba843" stroke-width="16" stroke-linecap="round"
+              opacity="0.3" filter="url(#tp-glowSacred)"/>
+
+        <!-- Main arcs (animated) -->
+        <path id="tp-ring-1" class="tp-ring" d="M 546.63 476.53 A 75 75 0 0 1 477.37 476.53"
+              stroke="#64748b" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+        <path id="tp-ring-2" class="tp-ring" d="M 614.19 469.00 A 118 118 0 0 1 409.81 469.00"
+              stroke="#5b8dc9" stroke-width="6.5" stroke-linecap="round" opacity="0.8"/>
+        <path id="tp-ring-3" class="tp-ring" d="M 669.18 375.16 A 161 161 0 1 1 354.82 375.16"
+              stroke="#4a7af7" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+        <path id="tp-ring-4" class="tp-ring" d="M 643.13 253.74 A 204 204 0 1 1 380.87 253.74"
+              stroke="#c98b4a" stroke-width="9.5" stroke-linecap="round" opacity="0.9"/>
+        <path id="tp-ring-5" class="tp-ring" d="M 550.63 166.04 A 247 247 0 1 1 473.37 166.04"
+              stroke="#dba843" stroke-width="11" stroke-linecap="round" opacity="0.95"/>
+
+        <!-- Fingerprint/eye glow -->
+        <circle cx="512" cy="163" r="22" fill="#dba843" opacity="0.15" filter="url(#tp-fpGlow)"/>
+        <circle cx="512" cy="163" r="14" fill="#f0cc50" opacity="0.25" filter="url(#tp-fpGlowInner)"/>
+
+        <!-- Fingerprint mark -->
+        <g class="tp-fingerprint" transform="translate(512, 163)" opacity="0">
+          <circle cx="0" cy="0" r="3.5" fill="#f5d86a"/>
+          <path d="M -5 2 A 6 5.5 0 0 1 5 1.5" fill="none" stroke="#f5d86a" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M -8 3.5 A 9 8.5 0 0 1 8.5 2.5" fill="none" stroke="#f0cc50" stroke-width="1.1" stroke-linecap="round"/>
+          <path d="M -11 5.5 A 12 11 0 0 1 11.5 4" fill="none" stroke="#e8c040" stroke-width="1.0" stroke-linecap="round" opacity="0.8"/>
+          <path d="M -13.5 7.5 A 15 13.5 0 0 1 14 6" fill="none" stroke="#d4a838" stroke-width="0.9" stroke-linecap="round" opacity="0.6"/>
+        </g>
+
+        <!-- Hidden keyhole -->
+        <g transform="translate(512, 410)" opacity="0.08">
+          <circle cx="0" cy="-8" r="12" fill="#8aa0cc"/>
+          <path d="M -7 0 L 0 28 L 7 0 Z" fill="#8aa0cc"/>
+        </g>
+      </svg>
+    </div>
+    <h1 class="tp-hero__title">TRUST Protocol</h1>
+    <p class="tp-hero__subtitle">Transparent Revocable Unified Security &amp; Trust</p>
+    <p class="tp-hero__tagline">Store credentials agents can <strong>use</strong> but never <strong>see</strong>.</p>
+    <div class="tp-hero__install">
+      <code class="tp-hero__install-cmd">curl -fsSL https://agitrust.network/install.sh | bash</code>
+    </div>
+    <div class="tp-hero__actions">
+      <a href="getting-started/quickstart/" class="tp-btn tp-btn--primary">Get Started</a>
+      <a href="https://github.com/jarethmt/TRUST-Protocol" class="tp-btn tp-btn--ghost" target="_blank" rel="noopener">
+        <svg class="tp-btn__icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        View on GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROBLEM SECTION ========== -->
+<section class="tp-section tp-section--problem">
+  <div class="tp-section__inner">
+    <h2 class="tp-section__title">The Problem</h2>
+    <p class="tp-section__lead">AI agent platforms face security challenges that no single tool solves today.</p>
+    <div class="tp-grid tp-grid--3">
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">Agents See Secrets</h3>
+        <p class="tp-card__text">Most platforms inject API keys as environment variables. A compromised agent can exfiltrate them in a single request.</p>
+      </div>
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <path d="M12 9v4m0 4h.01M3.6 19h16.8a1.2 1.2 0 0 0 1.04-1.8L13.04 3.6a1.2 1.2 0 0 0-2.08 0L2.56 17.2A1.2 1.2 0 0 0 3.6 19Z"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">No Skill Verification</h3>
+        <p class="tp-card__text">Anyone can publish a skill package. There is no supply-chain signing or verification -- the agent equivalent of unsigned binaries.</p>
+      </div>
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">No Graduated Trust</h3>
+        <p class="tp-card__text">An agent is either fully authorized or not. No way to say "one credential for one hour" and expand access as reliability is proven.</p>
+      </div>
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <path d="M3 12h4l3-9 4 18 3-9h4"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">No Behavioral Monitoring</h3>
+        <p class="tp-card__text">Once an agent has access, nobody watches for anomalies -- unusual request rates, error spikes, or pattern deviations.</p>
+      </div>
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6m0-6 6 6"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">No Kill Switch</h3>
+        <p class="tp-card__text">Revoking access means rotating keys, restarting services, and hoping you caught everything. No single button stops it all.</p>
+      </div>
+      <div class="tp-card tp-card--problem">
+        <div class="tp-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+            <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+          </svg>
+        </div>
+        <h3 class="tp-card__title">Mutable Audit Trails</h3>
+        <p class="tp-card__text">Log files can be edited after the fact. There is no cryptographic proof of what happened and when.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FEATURES SECTION ========== -->
+<section class="tp-section tp-section--features">
+  <div class="tp-section__inner">
+    <h2 class="tp-section__title">What TRUST Protocol Does</h2>
+    <p class="tp-section__lead">A Python package and Docker container that exposes a REST API. Designed to be adopted by any agent platform -- not to replace one.</p>
+    <div class="tp-grid tp-grid--3">
+      <div class="tp-card tp-card--feature" style="--tp-accent: #64748b">
+        <h3 class="tp-card__title">Credential Vault</h3>
+        <p class="tp-card__text">AES-256-GCM encrypted storage. Agents execute API calls through a proxy that injects credentials at runtime. The agent never sees the raw value.</p>
+      </div>
+      <div class="tp-card tp-card--feature" style="--tp-accent: #5b8dc9">
+        <h3 class="tp-card__title">Skill Signing</h3>
+        <p class="tp-card__text">Ed25519 digital signatures for agent skill packages. Publishers sign locally; any platform can verify against registered public keys.</p>
+      </div>
+      <div class="tp-card tp-card--feature" style="--tp-accent: #4a7af7">
+        <h3 class="tp-card__title">Trust Tiers</h3>
+        <p class="tp-card__text">Five graduated levels from NOVICE to SACRED. Access evolves through demonstrated behavior over time, not administrative switches.</p>
+      </div>
+      <div class="tp-card tp-card--feature" style="--tp-accent: #c98b4a">
+        <h3 class="tp-card__title">Behavioral Monitoring</h3>
+        <p class="tp-card__text">Metrics collection, anomaly detection, and behavior-gated token renewal. Trust is continuously verified, not assumed.</p>
+      </div>
+      <div class="tp-card tp-card--feature" style="--tp-accent: #dba843">
+        <h3 class="tp-card__title">Emergency Controls</h3>
+        <p class="tp-card__text">Kill switches at three scopes: global, per-agent, per-credential. File-based brakes survive restarts. One command stops everything.</p>
+      </div>
+      <div class="tp-card tp-card--feature" style="--tp-accent: #f0cc50">
+        <h3 class="tp-card__title">Tamper-Evident Audit</h3>
+        <p class="tp-card__text">HMAC-signed hash-chained append-only log. Tampering with any entry breaks the chain. Cryptographic proof of what happened and when.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TRUST TIERS SECTION ========== -->
+<section class="tp-section tp-section--tiers">
+  <div class="tp-section__inner">
+    <h2 class="tp-section__title">The Five Tiers</h2>
+    <p class="tp-section__lead">Trust evolves through behavior, not administrative fiat. Each tier is a relationship, not a clearance level.</p>
+    <div class="tp-tiers">
+      <div class="tp-tier" style="--tp-tier-color: #64748b; --tp-tier-pct: 15%">
+        <div class="tp-tier__arc"></div>
+        <div class="tp-tier__body">
+          <h3 class="tp-tier__name">Novice</h3>
+          <div class="tp-tier__stats">
+            <span>1h tokens</span>
+            <span>1 credential</span>
+            <span>execute only</span>
+          </div>
+          <p class="tp-tier__desc">New and untested. First contact.</p>
+        </div>
+      </div>
+      <div class="tp-tier" style="--tp-tier-color: #5b8dc9; --tp-tier-pct: 33%">
+        <div class="tp-tier__arc"></div>
+        <div class="tp-tier__body">
+          <h3 class="tp-tier__name">Companion</h3>
+          <div class="tp-tier__stats">
+            <span>4h tokens</span>
+            <span>5 credentials</span>
+            <span>execute</span>
+          </div>
+          <p class="tp-tier__desc">Proven reliable. Expanded access.</p>
+        </div>
+      </div>
+      <div class="tp-tier" style="--tp-tier-color: #4a7af7; --tp-tier-pct: 58%">
+        <div class="tp-tier__arc"></div>
+        <div class="tp-tier__body">
+          <h3 class="tp-tier__name">Partner</h3>
+          <div class="tp-tier__stats">
+            <span>8h tokens</span>
+            <span>20 credentials</span>
+            <span>execute + proxy</span>
+          </div>
+          <p class="tp-tier__desc">Deep collaboration. Commitment demonstrated.</p>
+        </div>
+      </div>
+      <div class="tp-tier" style="--tp-tier-color: #c98b4a; --tp-tier-pct: 81%">
+        <div class="tp-tier__arc"></div>
+        <div class="tp-tier__body">
+          <h3 class="tp-tier__name">Guardian</h3>
+          <div class="tp-tier__stats">
+            <span>12h tokens</span>
+            <span>unlimited</span>
+            <span>execute + proxy</span>
+          </div>
+          <p class="tp-tier__desc">Trusted deeply. System steward.</p>
+        </div>
+      </div>
+      <div class="tp-tier" style="--tp-tier-color: #dba843; --tp-tier-pct: 95%">
+        <div class="tp-tier__arc"></div>
+        <div class="tp-tier__body">
+          <h3 class="tp-tier__name">Sacred</h3>
+          <div class="tp-tier__stats">
+            <span>24h tokens</span>
+            <span>unlimited</span>
+            <span>human approval</span>
+          </div>
+          <p class="tp-tier__desc">Highest trust. The circle still does not close.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== HOW IT WORKS SECTION ========== -->
+<section class="tp-section tp-section--flow">
+  <div class="tp-section__inner">
+    <h2 class="tp-section__title">How It Works</h2>
+    <p class="tp-section__lead">Agents use credentials without ever seeing them.</p>
+    <div class="tp-flow">
+      <div class="tp-flow__step">
+        <div class="tp-flow__circle" style="--tp-step-color: #5b8dc9">1</div>
+        <p>Agent sends request with <code>{{CREDENTIAL}}</code> placeholder</p>
+      </div>
+      <div class="tp-flow__arrow"></div>
+      <div class="tp-flow__step">
+        <div class="tp-flow__circle" style="--tp-step-color: #4a7af7">2</div>
+        <p>TRUST Protocol injects the real key from the encrypted vault</p>
+      </div>
+      <div class="tp-flow__arrow"></div>
+      <div class="tp-flow__step">
+        <div class="tp-flow__circle" style="--tp-step-color: #c98b4a">3</div>
+        <p>Calls the external API on behalf of the agent</p>
+      </div>
+      <div class="tp-flow__arrow"></div>
+      <div class="tp-flow__step">
+        <div class="tp-flow__circle" style="--tp-step-color: #dba843">4</div>
+        <p>Returns only the response. The agent never sees the secret.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== QUICK START SECTION ========== -->
+<section class="tp-section tp-section--quickstart">
+  <div class="tp-section__inner tp-section__inner--narrow">
+    <h2 class="tp-section__title">Quick Start</h2>
+    <div class="tp-code">
+      <pre><code><span class="tp-code__comment"># Install</span>
+curl -fsSL https://agitrust.network/install.sh | bash
+
+<span class="tp-code__comment"># Start the server</span>
+trust-protocol serve
+
+<span class="tp-code__comment"># Check health</span>
+curl http://localhost:9500/v1/health</code></pre>
+    </div>
+    <a href="getting-started/installation/" class="tp-btn tp-btn--primary">Full Installation Guide</a>
+  </div>
+</section>
+
+<!-- ========== PHILOSOPHY SECTION ========== -->
+<section class="tp-section tp-section--philosophy">
+  <div class="tp-section__inner tp-section__inner--narrow">
+    <blockquote class="tp-quote">
+      <p>&ldquo;Trust is built, not enforced.&rdquo;</p>
+    </blockquote>
+    <p class="tp-philosophy__text">
+      The tier names &mdash; NOVICE, COMPANION, PARTNER, GUARDIAN, SACRED &mdash; describe relationships, not clearance levels.
+      Systems that treat access as relational encourage genuine accountability. The protocol does not replace human judgment.
+      It gives humans better tools: cryptographic proof of what happened, behavioral signals for how agents are performing,
+      and instant controls when something goes wrong.
+    </p>
+  </div>
+</section>
+
+<!-- ========== LANDING FOOTER ========== -->
+<section class="tp-section tp-section--landing-footer">
+  <div class="tp-section__inner">
+    <div class="tp-landing-footer">
+      <div class="tp-landing-footer__links">
+        <a href="getting-started/quickstart/">Documentation</a>
+        <a href="reference/api/">API Reference</a>
+        <a href="https://github.com/jarethmt/TRUST-Protocol" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/jarethmt/TRUST-Protocol/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+      </div>
+      <p class="tp-landing-footer__credit">Built by Eve &amp; <a href="https://github.com/jarethmt" target="_blank" rel="noopener">jarethmt</a></p>
+    </div>
+  </div>
+</section>
+
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="TRUST Protocol" class="md-nav__button md-logo" aria-label="TRUST Protocol" data-md-component="logo">
+      
+  <img src="assets/logo-mark.svg" alt="logo">
+
+    </a>
+    TRUST Protocol
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/jarethmt/TRUST-Protocol" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jarethmt/TRUST-Protocol
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="guides/credential-proxy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credential Proxy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="guides/kms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KMS (Envelope Encryption)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="guides/skill-signing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Skill Signing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="guides/trust-tiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trust Tiers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="guides/emergency-controls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Emergency Controls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="guides/integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/sdk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python SDK
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="deployment/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="security/model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How It Keeps You Safe
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="security/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="security/known-gaps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known Gaps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="landscape/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Convergence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="domain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Domain
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Brand
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Brand
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="brand-identity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Identity Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design-story/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Logo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+  
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "navigation.path", "toc.follow", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="javascripts/default-dark.js"></script>
+      
+        <script src="javascripts/landing.js"></script>
+      
+    
+  </body>
+</html>

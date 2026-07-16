@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="260 120 504 540" fill="none">
+  <defs>
+    <filter id="hg1" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+    </filter>
+    <filter id="hg2" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+    </filter>
+  </defs>
+  <!-- Glow hints -->
+  <path d="M 669.18 375.16 A 161 161 0 1 1 354.82 375.16"
+        stroke="#4a7af7" stroke-width="10" stroke-linecap="round"
+        opacity="0.2" filter="url(#hg1)"/>
+  <path d="M 550.63 166.04 A 247 247 0 1 1 473.37 166.04"
+        stroke="#dba843" stroke-width="12" stroke-linecap="round"
+        opacity="0.2" filter="url(#hg2)"/>
+  <!-- Ring 1: NOVICE -->
+  <path d="M 546.63 476.53 A 75 75 0 0 1 477.37 476.53"
+        stroke="#64748b" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+  <!-- Ring 2: COMPANION -->
+  <path d="M 614.19 469.00 A 118 118 0 0 1 409.81 469.00"
+        stroke="#5b8dc9" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+  <!-- Ring 3: PARTNER -->
+  <path d="M 669.18 375.16 A 161 161 0 1 1 354.82 375.16"
+        stroke="#4a7af7" stroke-width="7" stroke-linecap="round" opacity="0.85"/>
+  <!-- Ring 4: GUARDIAN -->
+  <path d="M 643.13 253.74 A 204 204 0 1 1 380.87 253.74"
+        stroke="#c98b4a" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+  <!-- Ring 5: SACRED -->
+  <path d="M 550.63 166.04 A 247 247 0 1 1 473.37 166.04"
+        stroke="#dba843" stroke-width="9" stroke-linecap="round" opacity="0.95"/>
+  <!-- Fingerprint/eye -->
+  <g transform="translate(512, 163)" opacity="0.85">
+    <circle cx="0" cy="0" r="3" fill="#f5d86a"/>
+    <path d="M -5 2 A 6 5.5 0 0 1 5 1.5" fill="none" stroke="#f5d86a" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M -8 3.5 A 9 8.5 0 0 1 8.5 2.5" fill="none" stroke="#f0cc50" stroke-width="1" stroke-linecap="round"/>
+    <path d="M -11 5.5 A 12 11 0 0 1 11.5 4" fill="none" stroke="#e8c040" stroke-width="0.9" stroke-linecap="round" opacity="0.7"/>
+  </g>
+</svg>
