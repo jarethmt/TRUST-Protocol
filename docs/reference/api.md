@@ -105,6 +105,37 @@ curl -X POST http://localhost:9500/v1/credentials/openai_key/proxy-execute \
   }'
 ```
 
+## KMS (Envelope Encryption)
+
+Data keys the caller uses itself to encrypt data at rest (the complement to the credential proxy). All
+require a **PARTNER+** agent and an unsealed server; audit-logged. See the [KMS guide](../guides/kms.md).
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/v1/kms/generate` | Agent (PARTNER+) | Generate a data key → `{ plaintext, wrapped }` |
+| POST | `/v1/kms/wrap` | Agent (PARTNER+) | Wrap a data key → `{ wrapped }` |
+| POST | `/v1/kms/unwrap` | Agent (PARTNER+) | Unwrap a blob → `{ plaintext }` |
+
+All three accept an optional base64 `aad` bound into the AES-256-GCM tag.
+
+### Generate a Data Key
+
+```bash
+curl -X POST http://localhost:9500/v1/kms/generate \
+  -H "X-Agent-Key: $AGENT_KEY" -H "Content-Type: application/json" \
+  -d '{"bytes": 32}'
+# { "plaintext": "<base64 data key>", "wrapped": "<base64 wrapped blob>" }
+```
+
+### Unwrap a Blob
+
+```bash
+curl -X POST http://localhost:9500/v1/kms/unwrap \
+  -H "X-Agent-Key: $AGENT_KEY" -H "Content-Type: application/json" \
+  -d '{"wrapped": "<base64 wrapped blob>"}'
+# { "plaintext": "<base64 data key>" }   (HTTP 400 if tampered / wrong key / AAD mismatch)
+```
+
 ## Tokens
 
 | Method | Path | Auth | Description |

@@ -70,6 +70,7 @@ nav:
     - Quick Start: getting-started/quickstart.md
   - Guides:
     - Credential Proxy: guides/credential-proxy.md
+    - KMS (Envelope Encryption): guides/kms.md
     - Skill Signing: guides/skill-signing.md
     - Trust Tiers: guides/trust-tiers.md
     - Emergency Controls: guides/emergency-controls.md
